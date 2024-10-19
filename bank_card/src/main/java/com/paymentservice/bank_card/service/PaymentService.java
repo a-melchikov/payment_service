@@ -15,12 +15,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PaymentService {
     private final CardRepository cardRepository;
-    private final static String SUCCESS = "Success";
-    private final static String ERROR = "Error";
-    private final static String INVALID_DATA = "Invalid card data";
-    private final static String INSUFFICIENT_FUNDS = "Insufficient funds";
-    private final static String EXPIRED = "Card expired or incorrect input expire date";
-    private final static String SUCCESS_MESSAGE = "Payment ended successfully";
+    private final static String SUCCESS = "Успех";
+    private final static String ERROR = "Ошибка";
+    private final static String INVALID_DATA = "Неверный номер карты или cvv код";
+    private final static String INSUFFICIENT_FUNDS = "Не хватает денег для оплаты";
+    private final static String EXPIRED = "Карта просрочена или неверно введена дата";
+    private final static String SUCCESS_MESSAGE = "Платеж прошел успешно";
 
     public Card findByCardNumberWithExceptionHandling(String cardNumber) {
         if (!cardRepository.existsByCardNumber(cardNumber)) {
