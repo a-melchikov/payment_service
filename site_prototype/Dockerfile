@@ -14,7 +14,7 @@ RUN pip install --upgrade pip
 RUN pip install poetry
 
 COPY pyproject.toml poetry.lock /app/
-RUN poetry install --no-dev
+RUN poetry install
 
 COPY . /app/
-RUN poetry install --no-dev
+RUN poetry install
