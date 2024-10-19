@@ -1,3 +1,8 @@
+import io
+
+from PIL import Image
+
+import numpy as np
 from django.db import models
 
 
@@ -31,6 +36,27 @@ class Product(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        img = Image.open(self.image.path).convert("RGBA")
+        data = np.array(img)
+
+        white_background = np.ones(data.shape, dtype=np.uint8) * 255
+        mask = (data[:, :, :3] < 200).any(axis=2)
+        white_background[mask] = data[mask]
+
+        img_no_bg = Image.fromarray(white_background)
+
+        output_size = (400, 400)
+        img_no_bg.thumbnail(output_size)
+
+        img_byte_arr = io.BytesIO()
+        img_no_bg.save(img_byte_arr, format="PNG")
+        img_byte_arr.seek(0)
+
+        self.image.save(f"{self.slug}.png", img_byte_arr, save=False)
 
     def __str__(self):
         return self.name
