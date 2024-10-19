@@ -1,6 +1,7 @@
 package com.paymentservice.bank_card.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,4 +14,5 @@ public class PaymentRequest {
     private String cardNumber;
     private String cvv;
     private BigDecimal paymentSum;
+    private LocalDate expiryDate;
 }
