@@ -25,6 +25,15 @@ public class CardRepositoryImpl implements CardRepository {
     }
 
     @Override
+    public boolean existsByCardNumber(String cardNumber) {
+        String jpql = "SELECT COUNT(c) FROM Card c WHERE c.cardNumber = :cardNumber";
+        Long count = entityManager.createQuery(jpql, Long.class)
+                .setParameter("cardNumber", cardNumber)
+                .getSingleResult();
+        return count > 0;
+    }
+
+    @Override
     @Transactional
     public void decreaseBalance(String cardNumber, BigDecimal amount) {
         Card card = findByCardNumber(cardNumber);
