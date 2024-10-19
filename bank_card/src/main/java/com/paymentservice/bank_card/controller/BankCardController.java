@@ -20,6 +20,6 @@ public class BankCardController {
 
     @PostMapping("/pay")
     public PaymentResponse pay(@RequestBody PaymentRequest paymentRequest) {
-        return cardService.makePayment(paymentRequest);
+        return cardService.pay(paymentRequest);
     }
 }

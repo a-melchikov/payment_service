@@ -4,5 +4,5 @@ import com.paymentservice.bank_card.dto.PaymentRequest;
 import com.paymentservice.bank_card.dto.PaymentResponse;
 
 public interface CardService {
-    PaymentResponse makePayment(PaymentRequest paymentRequest);
+    PaymentResponse pay(PaymentRequest paymentRequest);
 }
