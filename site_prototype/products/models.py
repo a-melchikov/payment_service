@@ -27,7 +27,7 @@ class Product(models.Model):
         verbose_name="Категория",
     )
     image = models.ImageField(
-        upload_to="products/", verbose_name="Изображение продукта"
+        upload_to="products/images/", verbose_name="Изображение продукта"
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
