@@ -51,10 +51,6 @@ public class Card {
     @Column(name = "issuing_bank", nullable = false)
     private String issuingBank;
 
-    @Column(name = "status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private CardStatus status;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
