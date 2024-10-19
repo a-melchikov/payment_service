@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Все категории{% endblock %}
+
+{% block content %}
+<h2>Все категории</h2>
+<ul>
+    {% for category in categories %}
+        <li>
+            <a href="{% url 'category-detail' category.slug %}">{{ category.name }}</a>
+        </li>
+    {% empty %}
+        <li>Категорий нет.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
