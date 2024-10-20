@@ -10,6 +10,7 @@ urlpatterns = [
     path("", RedirectView.as_view(url="products/")),
     path("", include("products.urls")),
     path("users/", include("users.urls")),
+    path("carts/", include("carts.urls")),
 ]
 
 if settings.DEBUG:
