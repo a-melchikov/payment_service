@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 
 import com.paymentservice.bank_card.domain.Card;
-import com.paymentservice.bank_card.dto.PaymentRequest;
+import com.paymentservice.bank_card.dto.BankCardPaymentRequest;
 import com.paymentservice.bank_card.dto.ResponseStatus;
 import com.paymentservice.bank_card.repository.CardRepository;
 
@@ -29,20 +29,20 @@ public class PaymentService {
         return cardRepository.findByCardNumber(cardNumber);
     }
 
-    private boolean checkCardData(Card card, PaymentRequest paymentRequest) {
+    private boolean checkCardData(Card card, BankCardPaymentRequest paymentRequest) {
         return card.getCardNumber() != null && card.getCvv() != null && card.getCvv().equals(paymentRequest.getCvv());
     }
 
-    private boolean hasSufficientFunds(Card card, PaymentRequest paymentRequest) {
+    private boolean hasSufficientFunds(Card card, BankCardPaymentRequest paymentRequest) {
         return card.getBalance() != null && card.getBalance().compareTo(paymentRequest.getPaymentSum()) >= 0;
     }
 
-    private boolean isExpiryDateValid(Card card, PaymentRequest paymentRequest) {
+    private boolean isExpiryDateValid(Card card, BankCardPaymentRequest paymentRequest) {
         return card.getExpiryDate() != null && card.getExpiryDate().isEqual(paymentRequest.getExpiryDate()) &&
                 paymentRequest.getExpiryDate().isAfter(LocalDate.now());
     }
 
-    public ResponseStatus processPayment(PaymentRequest paymentRequest) {
+    public ResponseStatus processPayment(BankCardPaymentRequest paymentRequest) {
         Card card = findByCardNumberWithExceptionHandling(paymentRequest.getCardNumber());
         if (!checkCardData(card, paymentRequest)) {
             return new ResponseStatus(ERROR, INVALID_DATA);
@@ -55,7 +55,7 @@ public class PaymentService {
         return new ResponseStatus(SUCCESS, SUCCESS_MESSAGE);
     }
 
-    private void decreaseBalance(PaymentRequest paymentRequest) {
+    private void decreaseBalance(BankCardPaymentRequest paymentRequest) {
         cardRepository.decreaseBalance(paymentRequest.getCardNumber(), paymentRequest.getPaymentSum());
     }
 }

@@ -1,8 +1,8 @@
 package com.paymentservice.bank_card.service;
 
-import com.paymentservice.bank_card.dto.PaymentRequest;
-import com.paymentservice.bank_card.dto.PaymentResponse;
+import com.paymentservice.bank_card.dto.BankCardPaymentRequest;
+import com.paymentservice.bank_card.dto.BankCardPaymentResponse;
 
 public interface CardService {
-    PaymentResponse pay(PaymentRequest paymentRequest);
+    BankCardPaymentResponse pay(BankCardPaymentRequest paymentRequest);
 }

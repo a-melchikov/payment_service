@@ -3,8 +3,8 @@ package com.paymentservice.bank_card.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.paymentservice.bank_card.dto.PaymentRequest;
-import com.paymentservice.bank_card.dto.PaymentResponse;
+import com.paymentservice.bank_card.dto.BankCardPaymentRequest;
+import com.paymentservice.bank_card.dto.BankCardPaymentResponse;
 import com.paymentservice.bank_card.service.CardService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +23,7 @@ public class BankCardController {
 
     @PostMapping("/pay")
     @Operation(summary = "Оплатить с помощью банковской карты", description = "Процесс платежа по банковской карте")
-    public PaymentResponse pay(@RequestBody PaymentRequest paymentRequest) {
+    public BankCardPaymentResponse pay(@RequestBody BankCardPaymentRequest paymentRequest) {
         return cardService.pay(paymentRequest);
     }
 }
