@@ -56,7 +56,12 @@ class Product(models.Model):
         img_no_bg.save(img_byte_arr, format="PNG")
         img_byte_arr.seek(0)
 
+        if self.image:
+            self.image.delete(save=False)
+
         self.image.save(f"{self.slug}.png", img_byte_arr, save=False)
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
