@@ -3,6 +3,7 @@ package com.paymentservice.backend.domain;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,12 +37,22 @@ public class FailedTransaction {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "description")
-    private String description;
-
     @Column(name = "error_message", nullable = false)
     private String errorMessage;
 
     @Column(name = "payment_method", nullable = false)
     private String paymentMethod;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FailedTransaction failedTransaction = (FailedTransaction) o;
+        return Objects.equals(id, failedTransaction.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
