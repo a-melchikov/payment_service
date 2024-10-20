@@ -15,6 +15,21 @@
           <li><a href="{% url 'product-list' %}">Продукты</a></li>
           <li><a href="{% url 'category-list' %}">Категории</a></li>
           <li><a href="/admin/">Админка</a></li>
+          {% if user.is_authenticated %}
+          <li>
+            <form
+              method="post"
+              action="{% url 'logout' %}"
+              style="display: inline"
+            >
+              {% csrf_token %}
+              <button type="submit">Выход</button>
+            </form>
+          </li>
+          {% else %}
+          <li><a href="{% url 'login' %}">Вход</a></li>
+          <li><a href="{% url 'register' %}">Регистрация</a></li>
+          {% endif %}
         </ul>
       </nav>
     </header>
@@ -22,7 +37,7 @@
     <main>{% block content %}{% endblock %}</main>
 
     <footer>
-      <p>&copy; {{ year }} Строительный магазин</p>
+      <p>&copy; {% now "Y" %} Строительный магазин</p>
     </footer>
   </body>
 </html>
