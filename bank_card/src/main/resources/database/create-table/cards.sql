@@ -1,4 +1,4 @@
-CREATE TABLE cards (
+CREATE TABLE IF NOT EXISTS cards (
     card_id SERIAL PRIMARY KEY,
     card_number VARCHAR(16) NOT NULL CHECK (LENGTH(card_number) = 16),
     card_holder_name VARCHAR(255) NOT NULL,

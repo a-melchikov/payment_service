@@ -1,4 +1,4 @@
-CREATE TABLE failed_transactions (
+CREATE TABLE IF NOT EXISTS failed_transactions (
     transaction_id SERIAL PRIMARY KEY,
     payment_identifier VARCHAR(20),
     amount DECIMAL(10, 2) NOT NULL,
