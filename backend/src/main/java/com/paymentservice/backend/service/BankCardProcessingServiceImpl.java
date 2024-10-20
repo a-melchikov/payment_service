@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class BankProcessingServiceImpl implements BankProcessingService {
+public class BankCardProcessingServiceImpl implements BankCardProcessingService {
     private final FailedTransactionRepository failedTransactionRepository;
     private final SuccessfulTransactionRepository successfulTransactionRepository;
     private final UserRepository userRepository;
