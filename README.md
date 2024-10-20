@@ -56,3 +56,5 @@ mvn spring-boot:run
 ```
 
 Теперь оба сервиса backend и bank-card должны быть запущены на портах 8080 и 8081 соответственно.
+
+OpenAPI документацию можно найти по пути http://localhost:8080/swagger-ui.html.
