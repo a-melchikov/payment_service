@@ -23,9 +23,8 @@ public class SuccessfulTransaction {
     @Column(name = "transaction_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "card_id")
-    private Card card;
+    @Column(name = "payment_identifier")
+    private String paymentIdentifier;
 
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
