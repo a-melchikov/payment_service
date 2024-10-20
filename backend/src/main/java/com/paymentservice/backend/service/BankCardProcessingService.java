@@ -1,7 +1,7 @@
 package com.paymentservice.backend.service;
 
-import com.paymentservice.backend.dto.BankCardPaymentRequest;
-import com.paymentservice.backend.dto.BankCardPaymentResponse;
+import com.paymentservice.dto.BankCardPaymentRequest;
+import com.paymentservice.dto.BankCardPaymentResponse;
 
 public interface BankCardProcessingService {
     BankCardPaymentResponse processBankPayment(BankCardPaymentRequest bankCardPaymentRequest);

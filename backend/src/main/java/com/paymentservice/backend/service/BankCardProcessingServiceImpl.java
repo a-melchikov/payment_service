@@ -8,11 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.paymentservice.backend.client.BankCardClient;
 import com.paymentservice.backend.domain.FailedTransaction;
 import com.paymentservice.backend.domain.SuccessfulTransaction;
-import com.paymentservice.backend.dto.BankCardPaymentRequest;
-import com.paymentservice.backend.dto.BankCardPaymentResponse;
 import com.paymentservice.backend.repository.FailedTransactionRepository;
 import com.paymentservice.backend.repository.SuccessfulTransactionRepository;
 import com.paymentservice.backend.repository.UserRepository;
+import com.paymentservice.dto.BankCardPaymentRequest;
+import com.paymentservice.dto.BankCardPaymentResponse;
 
 import lombok.RequiredArgsConstructor;
 

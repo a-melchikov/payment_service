@@ -3,8 +3,8 @@ package com.paymentservice.backend.client;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.paymentservice.backend.dto.BankCardPaymentRequest;
-import com.paymentservice.backend.dto.BankCardPaymentResponse;
+import com.paymentservice.dto.BankCardPaymentRequest;
+import com.paymentservice.dto.BankCardPaymentResponse;
 
 @Component
 public class BankCardClient {

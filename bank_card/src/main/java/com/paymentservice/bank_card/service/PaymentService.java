@@ -5,9 +5,9 @@ import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 
 import com.paymentservice.bank_card.domain.Card;
-import com.paymentservice.bank_card.dto.BankCardPaymentRequest;
-import com.paymentservice.bank_card.dto.ResponseStatus;
 import com.paymentservice.bank_card.repository.CardRepository;
+import com.paymentservice.dto.BankCardPaymentRequest;
+import com.paymentservice.dto.ResponseStatus;
 
 import lombok.RequiredArgsConstructor;
 

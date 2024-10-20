@@ -1,4 +1,4 @@
-package com.paymentservice.bank_card.dto;
+package com.paymentservice.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -4,9 +4,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.paymentservice.bank_card.dto.BankCardPaymentRequest;
-import com.paymentservice.bank_card.dto.BankCardPaymentResponse;
-import com.paymentservice.bank_card.dto.ResponseStatus;
+import com.paymentservice.dto.BankCardPaymentRequest;
+import com.paymentservice.dto.BankCardPaymentResponse;
+import com.paymentservice.dto.ResponseStatus;
 
 import lombok.RequiredArgsConstructor;
 

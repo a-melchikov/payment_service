@@ -3,9 +3,9 @@ package com.paymentservice.backend.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.paymentservice.backend.dto.BankCardPaymentRequest;
-import com.paymentservice.backend.dto.BankCardPaymentResponse;
 import com.paymentservice.backend.service.BankCardProcessingService;
+import com.paymentservice.dto.BankCardPaymentRequest;
+import com.paymentservice.dto.BankCardPaymentResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
