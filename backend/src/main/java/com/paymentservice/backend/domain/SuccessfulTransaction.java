@@ -1,6 +1,10 @@
 package com.paymentservice.backend.domain;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -14,9 +18,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-@Data
 @Entity
 @Table(name = "successful_transactions")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SuccessfulTransaction {
 
     @Id
