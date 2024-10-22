@@ -10,6 +10,21 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+  backend-app:
+    build:
+      context: ./backend  
+    depends_on:
+      - postgresql
+    ports:
+      - "8080:8080"  
+
+  bank-card-app:
+    build:
+      context: ./bank_card
+    depends_on:
+      - postgresql
+    ports:
+      - "8081:8081"
 volumes:
   pgdata: { }
     
