@@ -7,22 +7,18 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="1" author="Alexander Korepanov">
-        <sqlFile path="database/create-db/init.sql"/>
-    </changeSet>
-
-    <changeSet id="2" author="Alexander Korepanov">
         <sqlFile path="database/create-table/users.sql"/>
     </changeSet>
 
-    <changeSet id="3" author="Alexander Korepanov">
+    <changeSet id="2" author="Alexander Korepanov">
         <sqlFile path="database/create-table/successful_transactions.sql"/>
     </changeSet>
 
-    <changeSet id="4" author="Alexander Korepanov">
+    <changeSet id="3" author="Alexander Korepanov">
         <sqlFile path="database/create-table/failed_transactions.sql"/>
     </changeSet>
 
-    <changeSet id="5" author="Alexander Korepanov">
+    <changeSet id="4" author="Alexander Korepanov">
         <sqlFile path="database/insert/users.sql"/>
     </changeSet>
 </databaseChangeLog>
