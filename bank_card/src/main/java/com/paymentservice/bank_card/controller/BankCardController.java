@@ -10,6 +10,9 @@ import com.paymentservice.dto.BankCardPaymentResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -23,7 +26,11 @@ public class BankCardController {
 
     @PostMapping("/pay")
     @Operation(summary = "Оплатить с помощью банковской карты", description = "Процесс платежа по банковской карте")
-    public BankCardPaymentResponse pay(@RequestBody BankCardPaymentRequest paymentRequest) {
-        return cardService.pay(paymentRequest);
+    public ResponseEntity<BankCardPaymentResponse> pay(@RequestBody BankCardPaymentRequest paymentRequest) {
+        BankCardPaymentResponse bankCardPaymentResponse = cardService.pay(paymentRequest);
+        if ("Успех".equals(bankCardPaymentResponse.getResponseStatus().getStatus())) {
+            return new ResponseEntity<>(bankCardPaymentResponse, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(bankCardPaymentResponse, HttpStatus.BAD_REQUEST);
     }
 }
