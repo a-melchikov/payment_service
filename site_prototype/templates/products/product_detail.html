@@ -8,5 +8,17 @@
     <p>{{ product.description }}</p>
     <p>Цена: {{ product.price }}₽</p>
     <p>На складе: {{ product.stock }}</p>
+
+    {% if can_add_to_cart %}
+        <form method="post" action="{% url 'add-to-cart' product.id %}">
+            {% csrf_token %}
+            <label for="quantity">Количество:</label>
+            <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ max_quantity }}" required>
+            <button type="submit">Добавить в корзину</button>
+        </form>
+    {% else %}
+        <p>К сожалению, в данный момент данный товар недоступен для добавления в корзину.</p>
+    {% endif %}
+
     <a href="{% url 'product-list' %}">Назад к списку продуктов</a>
 {% endblock %}

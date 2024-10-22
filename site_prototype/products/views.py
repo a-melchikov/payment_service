@@ -1,4 +1,7 @@
+from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView
+
+from carts.models import Cart
 from .models import Product, Category
 
 
@@ -14,7 +17,22 @@ class ProductDetailView(DetailView):
     context_object_name = "product"
 
     def get_object(self):
-        return Product.objects.get(slug=self.kwargs["slug"])
+        return get_object_or_404(Product, slug=self.kwargs["slug"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        user = self.request.user
+        product = self.get_object()
+
+        current_quantity = Cart.objects.filter(user=user, product=product).first()
+        current_quantity = current_quantity.quantity if current_quantity else 0
+
+        max_quantity = product.stock - current_quantity
+        context["max_quantity"] = max_quantity
+        context["can_add_to_cart"] = max_quantity > 0
+
+        return context
 
 
 class CategoryListView(ListView):

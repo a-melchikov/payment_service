@@ -1,6 +1,6 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, DeleteView
+from django.views.generic import ListView, CreateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from products.models import Product
@@ -15,17 +15,51 @@ class CartListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Cart.objects.filter(user=self.request.user)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_items = self.get_queryset()
+        total_price = sum(item.product.price * item.quantity for item in cart_items)
+        context["total_price"] = total_price
+        return context
+
 
 class AddToCartView(LoginRequiredMixin, CreateView):
     model = Cart
-    fields = ["product", "quantity"]
+    fields = ["quantity"]
     success_url = reverse_lazy("cart-list")
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         product = get_object_or_404(Product, pk=self.kwargs["pk"])
         form.instance.product = product
-        return super().form_valid(form)
+
+        quantity_to_add = form.cleaned_data["quantity"]
+
+        existing_cart_item = Cart.objects.filter(
+            user=self.request.user, product=product
+        ).first()
+
+        if existing_cart_item:
+            new_quantity = existing_cart_item.quantity + quantity_to_add
+            if new_quantity > product.stock:
+                form.add_error(
+                    "quantity",
+                    f"Доступно только {product.stock} штук на складе, у вас в корзине: {existing_cart_item.quantity}.",
+                )
+                return self.form_invalid(form)
+
+            existing_cart_item.quantity = new_quantity
+            existing_cart_item.save()
+        else:
+            if quantity_to_add > product.stock:
+                form.add_error(
+                    "quantity", f"Доступно только {product.stock} штук на складе."
+                )
+                return self.form_invalid(form)
+
+            return super().form_valid(form)
+
+        return redirect(self.success_url)
 
 
 class RemoveFromCartView(LoginRequiredMixin, DeleteView):
@@ -34,3 +68,7 @@ class RemoveFromCartView(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return Cart.objects.filter(user=self.request.user)
+
+
+class CheckoutView(TemplateView):
+    template_name = "carts/checkout.html"
