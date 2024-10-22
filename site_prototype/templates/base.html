@@ -5,42 +5,111 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Строительный магазин{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   </head>
   <body>
     <header>
-      <h1>Строительный магазин</h1>
-      <nav>
-        <ul>
-          <li><a href="{% url 'product-list' %}">Продукты</a></li>
-          <li><a href="{% url 'category-list' %}">Категории</a></li>
-          {% if user.is_authenticated %}
-          <li><a href="{% url 'cart-list' %}">Корзина</a></li>
-          {% endif %}
-          <li><a href="/admin/">Админка</a></li>
-          {% if user.is_authenticated %}
-          <li>
-            <form
-              method="post"
-              action="{% url 'logout' %}"
-              style="display: inline"
-            >
-              {% csrf_token %}
-              <button type="submit">Выход</button>
-            </form>
-          </li>
-          {% else %}
-          <li><a href="{% url 'login' %}">Вход</a></li>
-          <li><a href="{% url 'register' %}">Регистрация</a></li>
-          {% endif %}
-        </ul>
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+          <!-- Домашняя страница (главная) -->
+          <a class="navbar-brand" href="{% url 'product-list' %}">
+            <img src="{% static 'img/home-icon.png' %}" alt="Главная" width="30" height="30" />
+          </a>
+
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+              <!-- Меню категорий с иконкой гамбургера -->
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link"
+                  href="#"
+                  id="menuDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <img src="{% static 'img/menu-icon.png' %}" alt="Меню" width="30" height="30" />
+                </a>
+                <div class="dropdown-menu scrollable-menu" aria-labelledby="menuDropdown">
+                  {% for category in categories %}
+                  <a class="dropdown-item" href="{% url 'category-detail' category.slug %}">
+                    {{ category.name }}
+                  </a>
+                  {% endfor %}
+                </div>
+              </li>
+
+              <!-- Форма поиска -->
+              <li class="nav-item">
+                <form class="form-inline">
+                  <input
+                    class="form-control search-input mr-sm-2"
+                    type="search"
+                    placeholder="Поиск"
+                    aria-label="Поиск"
+                  />
+                </form>
+              </li>
+            </ul>
+
+            <!-- Профиль и корзина -->
+            <ul class="navbar-nav">
+              {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'cart-list' %}">
+                  <img src="{% static 'img/cart-icon.png' %}" alt="Корзина" width="30" height="30" />
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'profile' %}">
+                  <img src="{% static 'img/user-icon.png' %}" alt="Профиль" width="30" height="30" />
+                </a>
+              </li>
+              <li class="nav-item">
+                <form method="post" action="{% url 'logout' %}" style="display: inline">
+                  {% csrf_token %}
+                  <button class="btn btn-outline-dark" type="submit">Выход</button>
+                </form>
+              </li>
+              {% else %}
+              <li class="nav-item">
+                <a class="btn btn-outline-dark" href="{% url 'login' %}">Вход</a>
+              </li>
+              <li class="nav-item">
+                <a class="btn btn-outline-dark" href="{% url 'register' %}">Регистрация</a>
+              </li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
       </nav>
     </header>
 
-    <main>{% block content %}{% endblock %}</main>
+    <main class="container mt-4">
+      {% block content %}{% endblock %}
+    </main>
 
-    <footer>
-      <p>&copy; {% now "Y" %} Строительный магазин</p>
-    </footer>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   </body>
 </html>
