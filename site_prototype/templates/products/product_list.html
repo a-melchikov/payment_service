@@ -3,14 +3,29 @@
 {% block title %}Все товары{% endblock %}
 
 {% block content %}
-<h2>Все товары</h2>
-<ul>
-    {% for product in products %}
-        <li>
-            <a href="{% url 'product-detail' product.slug %}">{{ product.name }}</a> - {{ product.price }}₽
-        </li>
-    {% empty %}
-        <li>Товаров нет.</li>
-    {% endfor %}
-</ul>
+<div class="container">
+    <h2 class="my-4">Все товары</h2>
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">
+                            <span class="price-tag">{{ product.price }}₽</span>
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'product-detail' product.slug %}" class="btn btn-primary btn-block">
+                            Подробнее
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>Товаров нет.</p>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

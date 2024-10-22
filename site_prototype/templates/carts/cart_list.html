@@ -3,45 +3,87 @@
 {% block title %}Корзина{% endblock %}
 
 {% block content %}
-  <h2>Корзина</h2>
+<div class="container my-4">
+    <div class="row">
+        <div class="col-md-8">
+            {% if cart_items %}
+                {% for item in cart_items %}
+                <div class="card mb-3">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col-md-3">
+                            <img src="{{ item.product.image.url }}" class="img-fluid" alt="{{ item.product.name }}">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ item.product.name }}</h5>
+                                <p class="card-text">{{ item.product.description }}</p>
+                                <p class="card-text"><strong>{{ item.product.price }} ₽</strong></p>
+                                <form method="post" action="{% url 'remove-from-cart' item.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger">
+                                        <i class="fas fa-trash-alt"></i> Удалить
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-center justify-content-center">
+                            <form method="post" class="d-flex align-items-center">
+                                {% csrf_token %}
+                                <button type="button" class="btn btn-outline-secondary">-</button>
+                                <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="10" class="form-control mx-2 text-center" style="width: 60px;">
+                                <button type="button" class="btn btn-outline-secondary">+</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-danger">Ваша корзина пуста.</p>
+            {% endif %}
+        </div>
 
-  {% if cart_items %}
-    <table>
-      <thead>
-        <tr>
-          <th>Продукт</th>
-          <th>Количество</th>
-          <th>Цена за единицу</th>
-          <th>Общая цена</th>
-          <th>Удалить</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for item in cart_items %}
-        <tr>
-          <td>{{ item.product.name }}</td>
-          <td>{{ item.quantity }}</td>
-          <td>{{ item.product.price }} руб.</td>
-          <td>{{ item.product.price|floatformat:2|add:item.quantity }} руб.</td>
-          <td>
-            <form method="post" action="{% url 'remove-from-cart' item.id %}">
-              {% csrf_token %}
-              <button type="submit">Удалить</button>
-            </form>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Товары ({{ cart_items|length }})</h5>
+                    <p class="card-text">Итого: <strong>{{ total_price }} ₽</strong></p>
+                    <form method="post" action="{% url 'checkout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-dark btn-block">Перейти к оплате</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <p><strong>Итого:</strong> {{ cart_items|length }} товаров, {{ total_price }} руб.</p>
+<style>
+  .card {
+      border-radius: 15px;
+  }
 
-    <form method="post" action="{% url 'checkout' %}">
-      {% csrf_token %}
-      <button type="submit">Оформить заказ</button>
-    </form>
+  .card-body {
+      padding: 1rem 1.5rem;
+  }
 
-  {% else %}
-    <p>Ваша корзина пуста.</p>
-  {% endif %}
+  .price-tag {
+      font-size: 1.5rem;
+      color: #333;
+  }
+
+  .btn-outline-danger {
+      border-radius: 50px;
+  }
+
+  .btn-dark {
+      border-radius: 8px;
+      font-size: 1rem;
+  }
+
+  input[type="number"] {
+      width: 60px;
+      text-align: center;
+  }
+</style>
+
 {% endblock %}

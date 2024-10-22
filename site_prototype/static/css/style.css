@@ -6,3 +6,20 @@
   max-height: 200px;
   overflow-y: auto;
 }
+
+.product-image {
+  height: 200px;
+  object-fit: cover;
+}
+
+.price-tag {
+  display: inline-block;
+  background-color: #28a745;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  min-width: 100px;
+}
