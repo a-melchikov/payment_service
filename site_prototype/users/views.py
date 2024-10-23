@@ -1,6 +1,9 @@
 from django.views import View
 from django.shortcuts import render, redirect
+from django.utils.decorators import method_decorator
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.decorators import login_required
+
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 
 
@@ -32,3 +35,9 @@ class UserLoginView(View):
                 login(request, user)
                 return redirect("product-list")
         return render(request, "users/login.html", {"form": form})
+
+
+class UserProfileView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        return render(request, "users/profile.html", {"user": request.user})
