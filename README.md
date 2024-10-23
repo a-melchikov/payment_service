@@ -2,7 +2,7 @@
 
 Для запуска в корневой папке введите команду:
 ```
-docker compose up -d
+docker compose up --build
 ```
 
 ## Важные моменты:
