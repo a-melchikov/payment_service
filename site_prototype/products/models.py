@@ -37,8 +37,10 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, process_image=True, **kwargs):
         super().save(*args, **kwargs)
+        if not process_image:
+            return
 
         img = Image.open(self.image.path).convert("RGBA")
         data = np.array(img)
