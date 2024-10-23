@@ -1,4 +1,5 @@
 from django.views import View
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.contrib.auth import login, authenticate
@@ -34,6 +35,8 @@ class UserLoginView(View):
             if user is not None:
                 login(request, user)
                 return redirect("product-list")
+        else:
+            messages.error(request, "Неверное имя пользователя или пароль.")
         return render(request, "users/login.html", {"form": form})
 
 
