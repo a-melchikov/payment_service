@@ -83,8 +83,8 @@ DATABASES = {
         "NAME": "shop_db",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "127.0.0.1",  # with local
-        # "HOST": "db",  # with docker
+        # "HOST": "127.0.0.1",  # with local
+        "HOST": "db",  # with docker
         "PORT": "5432",
     }
 }
