@@ -3,10 +3,50 @@
 {% block content %}
 <div class="container">
     <h2 class="my-4">Регистрация</h2>
-    <form method="post">
+    <form method="post" class="needs-validation" novalidate>
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+
+        <div class="form-group">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.username.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.password1.label_tag }}
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.password1.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.password2.label_tag }}
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.password2.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.birth_date.label_tag }}
+            {{ form.birth_date }}
+            {% if form.birth_date.errors %}
+                <div class="invalid-feedback d-block">
+                    {{ form.birth_date.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Зарегистрироваться</button>
     </form>
 </div>
 {% endblock %}
