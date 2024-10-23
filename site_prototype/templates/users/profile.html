@@ -8,6 +8,8 @@
     <p>Имя пользователя: {{ user.username }}</p>
     <p>Дата рождения: {{ user.birth_date }}</p>
     <p>Дата регистрации: {{ user.date_joined }}</p>
+    
+    <a href="{% url 'password_change' %}" class="btn btn-warning">Изменить пароль</a>
     <a href="{% url 'logout' %}" class="btn btn-danger">Выйти</a>
 </div>
 {% endblock %}
