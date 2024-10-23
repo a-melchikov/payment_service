@@ -4,7 +4,17 @@
 
 {% block content %}
 <div class="container">
-    <h2 class="my-4">Все товары</h2>
+    <h2 class="my-4">
+        {% if query %}
+            {% if products %}
+                Товары по запросу: "{{ query }}"
+            {% else %}
+                Товаров по запросу "{{ query }}" не найдено
+            {% endif %}
+        {% else %}
+            Все товары
+        {% endif %}
+    </h2>
     <div class="row">
         {% for product in products %}
             <div class="col-md-4 mb-4">
