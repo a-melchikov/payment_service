@@ -3,9 +3,14 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.decorators import login_required
 
-from .forms import CustomUserCreationForm, CustomAuthenticationForm
+from .forms import (
+    CustomUserCreationForm,
+    CustomAuthenticationForm,
+    CustomPasswordChangeForm,
+)
 
 
 class UserRegisterView(View):
@@ -44,3 +49,8 @@ class UserProfileView(View):
     @method_decorator(login_required)
     def get(self, request):
         return render(request, "users/profile.html", {"user": request.user})
+
+
+class CustomPasswordChangeView(PasswordChangeView):
+    form_class = CustomPasswordChangeForm
+    template_name = "users/password_change.html"
