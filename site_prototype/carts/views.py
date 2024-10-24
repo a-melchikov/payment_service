@@ -72,3 +72,6 @@ class RemoveFromCartView(LoginRequiredMixin, DeleteView):
 
 class CheckoutView(TemplateView):
     template_name = "carts/checkout.html"
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
