@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import ListView, CreateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -75,3 +76,20 @@ class CheckoutView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)
+
+
+class UpdateCartView(View):
+    def post(self, request, item_id):
+        cart_item = get_object_or_404(Cart, id=item_id)
+
+        try:
+            new_quantity = int(request.POST.get("quantity", cart_item.quantity))
+
+            if new_quantity <= 0:
+                cart_item.delete()
+            elif new_quantity <= cart_item.product.stock:
+                cart_item.quantity = new_quantity
+                cart_item.save()
+        except ValueError:
+            pass
+        return redirect("cart-list")
