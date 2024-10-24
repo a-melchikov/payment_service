@@ -43,14 +43,16 @@ class ProductDetailView(DetailView):
         product = self.get_object()
 
         if user.is_authenticated:
-            current_quantity = Cart.objects.filter(user=user, product=product).first()
-            current_quantity = current_quantity.quantity if current_quantity else 0
+            cart_item = Cart.objects.filter(user=user, product=product).first()
+            current_quantity = cart_item.quantity if cart_item else 0
+            context["cart_item"] = cart_item
         else:
             current_quantity = 0
 
-        max_quantity = product.stock - current_quantity
+        max_quantity = product.stock
         context["max_quantity"] = max_quantity
         context["can_add_to_cart"] = max_quantity > 0
+        context["current_quantity"] = current_quantity
 
         return context
 

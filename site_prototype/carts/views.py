@@ -80,7 +80,7 @@ class CheckoutView(TemplateView):
 
 class UpdateCartView(View):
     def post(self, request, item_id):
-        cart_item = get_object_or_404(Cart, id=item_id)
+        cart_item = get_object_or_404(Cart, id=item_id, user=request.user)
 
         try:
             new_quantity = int(request.POST.get("quantity", cart_item.quantity))

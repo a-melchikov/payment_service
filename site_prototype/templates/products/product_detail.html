@@ -13,19 +13,33 @@
             <p class="lead">{{ product.description }}</p>
             <p class="h4">Цена: <span class="price-tag">{{ product.price }}₽</span></p>
             <p><strong>На складе:</strong> {{ product.stock }}</p>
-            
+
             {% if user.is_authenticated %}
-                {% if can_add_to_cart %}
-                <form method="post" action="{% url 'add-to-cart' product.id %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="quantity">Количество:</label>
-                        <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="1" max="{{ max_quantity }}" required>
-                    </div>
-                    <button type="submit" class="btn btn-success btn-block">Добавить в корзину</button>
-                </form>
+                {% if current_quantity > 0 %}
+                    <p>Товар уже в корзине: <strong>{{ current_quantity }}</strong></p>
+                    <form method="post" action="{% url 'update-cart' cart_item.id %}" class="update-cart-form">
+                        {% csrf_token %}
+                        <div class="d-flex align-items-center">
+                            <button type="button" class="btn btn-outline-secondary quantity-minus" {% if max_quantity <= 0 %}disabled{% endif %}>-</button>
+                            <input type="number" id="quantity" name="quantity" class="form-control mx-2 text-center quantity-input" value="{{ current_quantity }}" min="1" max="{{ max_quantity }}" style="width: 60px;" required>
+                            <button type="button" class="btn btn-outline-secondary quantity-plus" {% if max_quantity <= 0 %}disabled{% endif %}>+</button>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-block mt-2">Обновить в корзине</button>
+                    </form>
                 {% else %}
-                <p class="text-danger">К сожалению, данный товар недоступен для добавления в корзину.</p>
+                    {% if can_add_to_cart %}
+                        <form method="post" action="{% url 'add-to-cart' product.id %}" class="update-cart-form">
+                            {% csrf_token %}
+                            <div class="d-flex align-items-center">
+                                <button type="button" class="btn btn-outline-secondary quantity-minus" {% if max_quantity <= 0 %}disabled{% endif %}>-</button>
+                                <input type="number" id="quantity" name="quantity" class="form-control mx-2 text-center quantity-input" value="{{ current_quantity }}" min="1" max="{{ max_quantity }}" style="width: 60px;" required>
+                                <button type="button" class="btn btn-outline-secondary quantity-plus" {% if max_quantity <= 0 %}disabled{% endif %}>+</button>
+                            </div>
+                            <button type="submit" class="btn btn-success btn-block mt-2">Добавить в корзину</button>
+                        </form>                
+                    {% else %}
+                        <p class="text-danger">К сожалению, данный товар недоступен для добавления в корзину.</p>
+                    {% endif %}
                 {% endif %}
             {% else %}
                 <p class="text-danger">Пожалуйста, <a href="{% url 'login' %}">войдите в аккаунт</a>, чтобы добавить товары в корзину.</p>
@@ -34,4 +48,52 @@
     </div>
     <a href="{% url 'product-list' %}" class="btn btn-secondary mt-4">Назад к списку продуктов</a>
 </div>
+
+<style>
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+  
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+</style>
+
+<script>
+    document.querySelectorAll('.quantity-minus').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var input = this.nextElementSibling;
+            var currentValue = parseInt(input.value);
+            if (currentValue > 1) {
+                input.value = currentValue - 1;
+            }
+        });
+    });
+    
+    document.querySelectorAll('.quantity-plus').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var input = this.previousElementSibling;
+            var currentValue = parseInt(input.value);
+            var maxValue = parseInt(input.max);
+            if (currentValue < maxValue) {
+                input.value = currentValue + 1;
+            }
+        });
+    });
+    
+    document.querySelectorAll('.quantity-input').forEach(function(input) {
+        input.addEventListener('change', function() {
+            if (parseInt(this.value) < 1) {
+                this.value = 1;
+            }
+            var maxValue = parseInt(this.max);
+            if (parseInt(this.value) > maxValue) {
+                this.value = maxValue;
+            }
+        });
+    });    
+</script>
+
 {% endblock %}
