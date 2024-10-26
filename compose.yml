@@ -1,15 +1,43 @@
-version: '3'
+version: '3.9'
+
 services:
-  postgresql:
+  db:
     image: postgres:16.4-alpine
-    restart: always
     environment:
+      - POSTGRES_DB=shop_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
-      - "5432:5432"
+      - '5434:5432'
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
+
+  postgresql:
+    image: postgres:16.4-alpine
+    environment:
+      - POSTGRES_DB=bank_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5433:5432'
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+
+  web:
+    build:
+      context: .
+      dockerfile: site_prototype.Dockerfile
+    command: /app/entrypoint.sh
+    restart: unless-stopped
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./site_prototype:/app
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+
   backend-app:
     build:
       context: .
@@ -31,6 +59,8 @@ services:
       - "8081:8081"
     volumes:
       - maven_cache:/root/.m2
+
 volumes:
-  pgdata: { }
-  maven_cache: { }
+  db_data: {}
+  postgresql_data: {}
+  maven_cache: {}
