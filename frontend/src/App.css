@@ -1,0 +1,20 @@
+#root {
+	display: flex;
+	justify-content: center;
+	margin: 0;
+	padding: 0;
+	min-width: 320px;
+	min-height: 100vh;
+	background: rgb(188, 214, 229);
+	background: linear-gradient(
+		-37deg,
+		rgba(188, 214, 229, 1) 0%,
+		rgba(38, 152, 225, 1) 25%,
+		rgba(22, 137, 210, 1) 50%,
+		rgba(38, 152, 225, 1) 75%,
+		rgba(188, 214, 229, 1) 100%
+	);
+	font-family: "Montserrat", sans-serif;
+	font-weight: 400;
+	font-style: normal;
+}
