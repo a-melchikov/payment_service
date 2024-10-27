@@ -60,6 +60,17 @@ services:
     volumes:
       - maven_cache:/root/.m2
 
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend.Dockerfile
+    container_name: react-ui
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
 volumes:
   db_data: {}
   postgresql_data: {}
