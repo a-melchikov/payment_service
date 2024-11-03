@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import MethodCard from "../MethodCard/MethodCard";
 import { formatAmount } from "../utils/formatAmount";
 
@@ -14,6 +14,7 @@ function PaymentMethods() {
     const [paymentAmount, setPaymentAmount] = useState("0");
     const [containerWidth, setContainerWidth] = useState<number | null>(null);
     const containerRef = useRef<HTMLDivElement | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (containerRef.current) {
@@ -55,6 +56,10 @@ function PaymentMethods() {
         fetchPaymentAmount();
     }, []);    
     
+    const handleGoBack = () => {
+        navigate(-1);
+    };
+
     return (
         <motion.div
             className="flex flex-col self-center tabletS:mx-10 mobileS:mx-5 px-5 pt-8 max-w-[580px] w-full tabletS:h-[760px] mobileS:h-[600px] tabletM:rounded-[20px] tabletS:rounded-[16px] mobileM:rounded-[12px] mobileS:rounded-[8px] bg-primary"
@@ -67,7 +72,7 @@ function PaymentMethods() {
                 exit={{ opacity: 0 }}
                 className="flex flex-col flex-grow self-center items-center w-fit h-fit tabletS:gap-[30px] mobileS:gap-[20px]"
             >
-                <div className="flex self-start items-center gap-2 cursor-pointer">
+                <div className="flex self-start items-center gap-2 cursor-pointer" onClick={handleGoBack}>
                     <div className="flex justify-center items-center tabletS:w-[30px] tabletS:h-[30px] mobileS:w-[24px] mobileS:h-[24px] bg-backBtn rounded-[5px]">
                         <FaAngleLeft className="tabletS:text-[20px] mobileS:text-[16px]" />
                     </div>
