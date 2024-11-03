@@ -1,8 +1,11 @@
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.http import JsonResponse
 from django.views import View
 from django.views.generic import ListView, CreateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 from products.models import Product
 from .models import Cart
@@ -71,11 +74,25 @@ class RemoveFromCartView(LoginRequiredMixin, DeleteView):
         return Cart.objects.filter(user=self.request.user)
 
 
-class CheckoutView(TemplateView):
-    template_name = "carts/checkout.html"
-
+@method_decorator(csrf_exempt, name='dispatch')
+class CheckoutView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Требуется аутентификация'}, status=401)
+
+        cart_items = Cart.objects.filter(user=request.user)
+
+        if not cart_items.exists():
+            return JsonResponse({'error': 'Корзина пуста'}, status=400)
+
+        total_price = sum(item.product.price * item.quantity for item in cart_items)
+
+        response_data = {
+            'user_id': request.user.id,
+            'total_price': total_price,
+        }
+
+        return JsonResponse(response_data, status=200)
 
 
 class UpdateCartView(View):

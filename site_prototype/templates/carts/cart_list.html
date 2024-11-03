@@ -55,7 +55,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Товары ({{ cart_items|length }})</h5>
                     <p class="card-text">Итого: <strong class="total-price">{{ total_price }} ₽</strong></p>
-                    <form method="post" action="{% url 'checkout' %}">
+                    <form id="checkout-form" method="post" action="{% url 'checkout' %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-dark btn-block">Перейти к оплате</button>
                     </form>
@@ -127,5 +127,46 @@
             submitForm(this.closest('form'));
         });
     });
+
+    document.querySelector('#checkout-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        fetch('{% url "checkout" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Success:', data);
+            window.location.href = 'http://localhost:5173/';
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 </script>
 {% endblock %}

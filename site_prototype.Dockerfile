@@ -5,17 +5,17 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-RUN apt-get update \
-    && apt-get install -y libpq-dev netcat-openbsd \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends libpq-dev netcat-openbsd && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip
-RUN pip install poetry
+RUN pip install --upgrade pip && \
+    pip install poetry
 
 COPY site_prototype/pyproject.toml site_prototype/poetry.lock /app/
 
-RUN poetry install
+RUN poetry install --no-dev
 
 COPY site_prototype /app/
 
