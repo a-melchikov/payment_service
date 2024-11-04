@@ -11,7 +11,7 @@ export default {
 				primaryBtn: "#52ABE3",
 				inputField: "#EBEBEB",
 				invalid: "#FF6347",
-				valid: "#32CD32",
+				valid: "#43A047",
 			},
 			boxShadow: {
 				methodCardShadow: "0 3px 10px -1px rgba(0, 0, 0, 0.35)",

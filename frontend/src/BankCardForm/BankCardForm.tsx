@@ -1,9 +1,12 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useScreenWidth from "../hooks/useScreenWidth";
+import { usePayment } from "../PaymentContext";
 import isPastDate from "../utils/isPastDate";
+
+import { FaAngleLeft } from "react-icons/fa6";
 
 interface IBankCardForm {
 	cardNumber: string;
@@ -13,11 +16,13 @@ interface IBankCardForm {
 
 function BankCardForm() {
 	const location = useLocation();
+	const navigate = useNavigate();
 	const { containerWidth } = location.state;
 	const [cardNumber, setCardNumber] = useState<string>("");
 	const [date, setDate] = useState<string>("");
 	const [cvc, setCvc] = useState<string>("");
-	const [paymentAmount, setPaymentAmount] = useState<string>("");
+	const { paymentData } = usePayment();
+	const { setPaymentStatus } = usePayment();
 
 	const screenWidth = useScreenWidth();
 	const shouldAnimate = screenWidth > 660;
@@ -100,30 +105,44 @@ function BankCardForm() {
 
 			const newMonth = month === 12 ? 1 : month + 1;
 			const newYear = month === 12 ? year + 1 : year;
-	
-			const formattedExpiryDate = `20${newYear.toString().padStart(2, '0')}-${newMonth.toString().padStart(2, '0')}-01`;
-	
-			const response = await fetch("http://host.docker.internal:8080/api/v1/payments/bankcard", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					userId: 0,
-					cardNumber: cardNumber.replace(/\s/g, ""),
-					cvv: cvc,
-					paymentSum: 10,
-					expiryDate: formattedExpiryDate,
-				}),
-			});
-	
+
+			const formattedExpiryDate = `20${newYear
+				.toString()
+				.padStart(2, "0")}-${newMonth.toString().padStart(2, "0")}-01`;
+
+			const response = await fetch(
+				"http://host.docker.internal:8080/api/v1/payments/bankcard",
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						userId: paymentData?.userId,
+						cardNumber: cardNumber.replace(/\s/g, ""),
+						cvv: cvc,
+						paymentSum: paymentData?.paymentAmount,
+						expiryDate: formattedExpiryDate,
+					}),
+				}
+			);
+
 			const result = await response.json();
+
 			if (result.responseStatus.status === "Успех") {
 				console.log("Оплата прошла успешно");
+				setPaymentStatus(result);
 			} else {
 				console.log(result.responseStatus.message);
+				setPaymentStatus(result);
 			}
+
+			navigate("/bankCard/status");
 		} catch (error) {
 			console.log("Error processing payment:", error);
 		}
+	};
+
+	const handleGoBack = () => {
+		navigate(-1);
 	};
 
 	return (
@@ -145,9 +164,20 @@ function BankCardForm() {
 				}
 				className="flex flex-col justify-center items-center w-full h-full"
 			>
+				<div
+					className="flex mt-[2%] ml-[5%] self-start items-center gap-2 cursor-pointer"
+					onClick={handleGoBack}
+				>
+					<div className="flex justify-center items-center tabletS:w-[30px] tabletS:h-[30px] mobileS:w-[24px] mobileS:h-[24px] bg-backBtn rounded-[5px]">
+						<FaAngleLeft className="tabletS:text-[20px] mobileS:text-[16px]" />
+					</div>
+					<p className="tabletS:text-[16px] mobileS:text-[12px]">
+						Вернуться назад
+					</p>
+				</div>
 				<form
 					onSubmit={handleSubmit(onSubmit)}
-					className="flex flex-col justify-center items-center w-full h-full gap-10"
+					className="flex flex-col justify-center items-center w-full h-full tabletM:gap-5 tabletS:gap-10 mobileS:gap-14"
 				>
 					<p className="tabletS:text-[32px] mobileM:text-[24px] mobileS:text-[20px] font-medium text-center">
 						Введите данные карты
@@ -240,9 +270,12 @@ function BankCardForm() {
 							/>
 						</div>
 					</div>
-					<button className="tablet:w-[260px] tabletS:h-[60px] mobileS:w-[160px] mobileS:h-[40px] bg-primaryBtn shadow-btnShadow rounded-[15px] tabletS:text-[24px] mobileS:text-[16px]">
+					<motion.button
+						whileTap={{ scale: 0.95, transition: { duration: 0.1 } }}
+						className="tabletS:w-[260px] tabletS:h-[60px] mobileS:w-[160px] mobileS:h-[40px] bg-primaryBtn shadow-btnShadow rounded-[15px] tabletS:text-[24px] mobileS:text-[16px]"
+					>
 						Оплатить
-					</button>
+					</motion.button>
 				</form>
 			</motion.div>
 		</motion.div>
