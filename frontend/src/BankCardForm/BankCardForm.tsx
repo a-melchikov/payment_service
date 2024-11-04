@@ -93,29 +93,33 @@ function BankCardForm() {
 		await trigger("cvc");
 	};
 
-	const onSubmit: SubmitHandler<IBankCardForm> = async (data) => {
+	const onSubmit: SubmitHandler<IBankCardForm> = async () => {
 		try {
-			const response = await fetch(
-				"http://host.docker.internal:8080/api/v1/payments/bankcard",
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						userId: 0,
-						cardNumber: cardNumber.replace(/\s/g, ""),
-						cvv: cvc,
-						paymentSum: 10,
-						expiryDate: `20${date.slice(3, 5)}-${date.slice(0, 2)}-01`,
-					}),
-				}
-			);
+			const month = parseInt(date.slice(0, 2), 10);
+			const year = parseInt(date.slice(3, 5), 10);
 
+			const newMonth = month === 12 ? 1 : month + 1;
+			const newYear = month === 12 ? year + 1 : year;
+	
+			const formattedExpiryDate = `20${newYear.toString().padStart(2, '0')}-${newMonth.toString().padStart(2, '0')}-01`;
+	
+			const response = await fetch("http://host.docker.internal:8080/api/v1/payments/bankcard", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					userId: 0,
+					cardNumber: cardNumber.replace(/\s/g, ""),
+					cvv: cvc,
+					paymentSum: 10,
+					expiryDate: formattedExpiryDate,
+				}),
+			});
+	
 			const result = await response.json();
 			if (result.responseStatus.status === "Успех") {
 				console.log("Оплата прошла успешно");
 			} else {
 				console.log(result.responseStatus.message);
-				console.log(`20${date.slice(3, 5)}-${date.slice(0, 2)}-01`);
 			}
 		} catch (error) {
 			console.log("Error processing payment:", error);
