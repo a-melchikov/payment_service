@@ -19,6 +19,6 @@ public class CardServiceImpl implements CardService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public BankCardPaymentResponse pay(BankCardPaymentRequest paymentRequest) {
         ResponseStatus responseStatus = paymentService.processPayment(paymentRequest);
-        return new BankCardPaymentResponse(paymentRequest.getCardNumber(), responseStatus);
+        return new BankCardPaymentResponse(paymentRequest.getUserId(), paymentRequest.getCardNumber(), responseStatus);
     }
 }

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BankCardPaymentRequest {
+    private Long userId;
     private String cardNumber;
     private String cvv;
     private BigDecimal paymentSum;

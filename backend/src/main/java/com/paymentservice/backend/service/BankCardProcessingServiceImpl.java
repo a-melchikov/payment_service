@@ -10,7 +10,6 @@ import com.paymentservice.backend.domain.FailedTransaction;
 import com.paymentservice.backend.domain.SuccessfulTransaction;
 import com.paymentservice.backend.repository.FailedTransactionRepository;
 import com.paymentservice.backend.repository.SuccessfulTransactionRepository;
-import com.paymentservice.backend.repository.UserRepository;
 import com.paymentservice.dto.BankCardPaymentRequest;
 import com.paymentservice.dto.BankCardPaymentResponse;
 
@@ -21,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 public class BankCardProcessingServiceImpl implements BankCardProcessingService {
     private final FailedTransactionRepository failedTransactionRepository;
     private final SuccessfulTransactionRepository successfulTransactionRepository;
-    private final UserRepository userRepository;
     private final BankCardClient bankCardClient;
     private final static String BANK_CARD = "card";
     private final static String SUCCESS = "Успех";
@@ -46,7 +44,7 @@ public class BankCardProcessingServiceImpl implements BankCardProcessingService 
         failedTransaction.setErrorMessage(bankCardPaymentResponse.getResponseStatus().getMessage());
         failedTransaction.setTransactionDate(LocalDateTime.now());
         failedTransaction.setPaymentMethod(BANK_CARD);
-        failedTransaction.setUser(userRepository.findRandomUser());
+        failedTransaction.setUserId(bankCardPaymentRequest.getUserId());
         failedTransactionRepository.save(failedTransaction);
     }
 
@@ -57,7 +55,7 @@ public class BankCardProcessingServiceImpl implements BankCardProcessingService 
         successfulTransaction.setPaymentIdentifier(bankCardPaymentRequest.getCardNumber());
         successfulTransaction.setPaymentMethod(BANK_CARD);
         successfulTransaction.setTransactionDate(LocalDateTime.now());
-        successfulTransaction.setUser(userRepository.findRandomUser());
+        successfulTransaction.setUserId(bankCardPaymentRequest.getUserId());
         successfulTransactionRepository.save(successfulTransaction);
     }
 }

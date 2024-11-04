@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BankCardPaymentResponse {
+    private Long userId;
     private String cardNumber;
     private ResponseStatus responseStatus;
 }
