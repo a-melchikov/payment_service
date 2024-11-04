@@ -18,5 +18,3 @@ COPY site_prototype/pyproject.toml site_prototype/poetry.lock /app/
 RUN poetry install --no-dev
 
 COPY site_prototype /app/
-
-RUN chmod +x /app/entrypoint.sh

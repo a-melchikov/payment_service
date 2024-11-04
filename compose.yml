@@ -34,7 +34,29 @@ services:
     build:
       context: .
       dockerfile: site_prototype.Dockerfile
-    command: /app/entrypoint.sh
+    command: >
+      bash -c "
+      if poetry run python manage.py migrate; then 
+        echo 'Migrations applied successfully'; 
+      else 
+        echo 'Migration failed (already exists or failed)'; 
+      fi && 
+      if poetry run python manage.py shell -c 'from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username=\"admin\").exists() or User.objects.create_superuser(\"admin\", \"admin@example.com\", \"admin\")'; then 
+        echo 'Superuser created or already exists'; 
+      else 
+        echo 'Superuser creation failed (already exists or failed)'; 
+      fi && 
+      if poetry run python manage.py populate_db; then 
+        echo 'Database populated successfully'; 
+      else 
+        echo 'Database population failed or command not found'; 
+      fi && 
+      if poetry run python manage.py runserver 0.0.0.0:8000; then 
+        echo 'Server started on port 8000'; 
+      else 
+        echo 'Server failed to start'; 
+      fi
+      "
     restart: unless-stopped
     environment:
       - PYTHONPATH=/app
