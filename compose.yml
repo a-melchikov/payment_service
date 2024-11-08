@@ -77,6 +77,10 @@ services:
       - "8080:8080"
     volumes:
       - maven_cache:/root/.m2
+    labels:
+      - "prometheus.io/scrape=true"
+      - "prometheus.io/port=8080"
+      - "prometheus.io/path=/actuator/prometheus"
 
   bank-card-app:
     build:
@@ -100,7 +104,38 @@ services:
       - ./frontend:/app
       - /app/node_modules
 
+  prometheus:
+    image: prom/prometheus:v2.30.3
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    depends_on:
+      - backend-app
+
+  grafana:
+    image: grafana/grafana:8.2.2
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
 volumes:
-  db_data: {}
-  postgresql_data: {}
-  maven_cache: {}
+  db_data: { }
+  postgresql_data: { }
+  maven_cache: { }
+  prometheus_data: { }
+  grafana_data: { }
+
