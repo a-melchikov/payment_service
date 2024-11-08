@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import MethodCard from "../MethodCard/MethodCard";
-import { usePayment } from "../PaymentContext";
 import { formatAmount } from "../utils/formatAmount";
 
 import bankCard from "../images/bank-card.svg";
@@ -14,7 +13,6 @@ import { FaAngleLeft } from "react-icons/fa6";
 function PaymentMethods() {
 	const [paymentAmount, setPaymentAmount] = useState("0");
 	const [containerWidth, setContainerWidth] = useState<number | null>(null);
-	const { setPaymentData } = usePayment();
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const navigate = useNavigate();
 
@@ -53,11 +51,8 @@ function PaymentMethods() {
 				}
 
 				const data = await response.json();
+				sessionStorage.setItem("paymentData", JSON.stringify(data));
 				setPaymentAmount(data.total_price);
-				setPaymentData({
-					userId: data.user_id,
-					paymentAmount: data.total_price,
-				});
 			} catch (error) {
 				console.error("Error fetching payment amount:", error);
 			}

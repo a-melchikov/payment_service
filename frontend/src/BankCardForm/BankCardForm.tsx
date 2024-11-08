@@ -1,9 +1,8 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import useScreenWidth from "../hooks/useScreenWidth";
-import { usePayment } from "../PaymentContext";
 import isPastDate from "../utils/isPastDate";
 
 import { FaAngleLeft } from "react-icons/fa6";
@@ -14,19 +13,30 @@ interface IBankCardForm {
 	cvc: string;
 }
 
+interface IPaymentData {
+	user_id: string;
+	total_price: string;
+}
+
 function BankCardForm() {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const { containerWidth } = location.state;
+	const [paymentData, setPaymentData] = useState<IPaymentData>();
 	const [cardNumber, setCardNumber] = useState<string>("");
 	const [date, setDate] = useState<string>("");
 	const [cvc, setCvc] = useState<string>("");
-	const { paymentData } = usePayment();
-	const { setPaymentStatus } = usePayment();
 
 	const screenWidth = useScreenWidth();
 	const shouldAnimate = screenWidth > 660;
 	const currentDate = new Date();
+
+	useEffect(() => {
+		const storedPaymentData = sessionStorage.getItem("paymentData");
+		if (storedPaymentData) {
+			setPaymentData(JSON.parse(storedPaymentData));
+		}
+	}, []);
 
 	const {
 		register,
@@ -48,7 +58,6 @@ function BankCardForm() {
 		const numericValue = value.replace(/\D/g, "");
 
 		const formattedValue = numericValue.slice(0, 4);
-		console.log(formattedValue);
 
 		if (formattedValue.length === 1 && Number(formattedValue) > 1) {
 			return "0" + formattedValue;
@@ -116,10 +125,10 @@ function BankCardForm() {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
-						userId: paymentData?.userId,
+						userId: paymentData?.user_id,
 						cardNumber: cardNumber.replace(/\s/g, ""),
 						cvv: cvc,
-						paymentSum: paymentData?.paymentAmount,
+						paymentSum: paymentData?.total_price,
 						expiryDate: formattedExpiryDate,
 					}),
 				}
@@ -129,12 +138,11 @@ function BankCardForm() {
 
 			if (result.responseStatus.status === "Успех") {
 				console.log("Оплата прошла успешно");
-				setPaymentStatus(result);
 			} else {
 				console.log(result.responseStatus.message);
-				setPaymentStatus(result);
 			}
 
+			sessionStorage.setItem("paymentStatus", JSON.stringify(result));
 			navigate("/bankCard/status");
 		} catch (error) {
 			console.log("Error processing payment:", error);
