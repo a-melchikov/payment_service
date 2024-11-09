@@ -29,7 +29,7 @@ public class BasePaymentProcessingController {
     
     @PostMapping("/bankcard")
     @Operation(summary = "Осуществить платеж по реквизитам банковской карты")
-    public BankCardPaymentResponse postMethodName(@RequestBody BankCardPaymentRequest bankCardPaymentRequest) {
+    public BankCardPaymentResponse pay(@RequestBody BankCardPaymentRequest bankCardPaymentRequest) {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (requestAttributes != null) {
             requestAttributes.setAttribute(CONTEXT_ATTRIBUTE_NAME, bankCardPaymentRequest, WebRequest.SCOPE_REQUEST);

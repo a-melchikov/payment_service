@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.paymentservice.backend.client.BankCardClient;
 import com.paymentservice.backend.domain.FailedTransaction;
+import com.paymentservice.backend.domain.SavedBankCard;
 import com.paymentservice.backend.domain.SuccessfulTransaction;
 import com.paymentservice.backend.repository.FailedTransactionRepository;
 import com.paymentservice.backend.repository.SuccessfulTransactionRepository;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class BankCardProcessingServiceImpl implements BankCardProcessingService {
     private final FailedTransactionRepository failedTransactionRepository;
     private final SuccessfulTransactionRepository successfulTransactionRepository;
+    private final SavedBankCardService savedBankCardService;
     private final BankCardClient bankCardClient;
     private final static String BANK_CARD = "card";
     private final static String SUCCESS = "Успех";
@@ -30,6 +32,7 @@ public class BankCardProcessingServiceImpl implements BankCardProcessingService 
         BankCardPaymentResponse bankCardPaymentResponse = bankCardClient.makePayment(bankCardPaymentRequest);
         if (SUCCESS.equals(bankCardPaymentResponse.getResponseStatus().getStatus())) {
             saveSuccessfulTransaction(bankCardPaymentRequest, bankCardPaymentResponse);
+            saveBankCard(bankCardPaymentRequest);
         } else {
             saveFailedTransaction(bankCardPaymentRequest, bankCardPaymentResponse);
         }
@@ -57,5 +60,14 @@ public class BankCardProcessingServiceImpl implements BankCardProcessingService 
         successfulTransaction.setTransactionDate(LocalDateTime.now());
         successfulTransaction.setUserId(bankCardPaymentRequest.getUserId());
         successfulTransactionRepository.save(successfulTransaction);
+    }
+
+    private void saveBankCard(BankCardPaymentRequest bankCardPaymentRequest) {
+        SavedBankCard savedBankCard = new SavedBankCard();
+        savedBankCard.setCardNumber(bankCardPaymentRequest.getCardNumber());
+        savedBankCard.setCvv(bankCardPaymentRequest.getCvv());
+        savedBankCard.setExpiryDate(bankCardPaymentRequest.getExpiryDate());
+        savedBankCard.setUserId(bankCardPaymentRequest.getUserId());
+        savedBankCardService.save(savedBankCard);
     }
 }
