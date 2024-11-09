@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/saved-cards")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin
 @Tag(name = "Saved Cards API", description = "API для работы с сохраненными банковскими картами")
 public class SavedCardProcessingController {
     private final SavedBankCardService savedBankCardService;

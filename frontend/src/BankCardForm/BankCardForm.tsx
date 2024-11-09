@@ -120,10 +120,12 @@ function BankCardForm() {
 				.padStart(2, "0")}-${newMonth.toString().padStart(2, "0")}-01`;
 
 			const response = await fetch(
-				"http://host.docker.internal:8080/api/v1/payments/bankcard",
+				"http://127.0.0.1:8080/api/v1/payments/bankcard",
 				{
 					method: "POST",
-					headers: { "Content-Type": "application/json" },
+					headers: {
+						"Content-Type": "application/json",
+					},
 					body: JSON.stringify({
 						userId: paymentData?.user_id,
 						cardNumber: cardNumber.replace(/\s/g, ""),

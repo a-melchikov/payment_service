@@ -11,7 +11,7 @@ public class BankCardClient {
     private final WebClient webClient;
 
     public BankCardClient(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://host.docker.internal:8081/api/v1/bankcard").build();
+        this.webClient = webClientBuilder.baseUrl("http://172.17.0.1:8081/api/v1/bankcard").build();
     }
 
     public BankCardPaymentResponse makePayment(BankCardPaymentRequest paymentRequest) {
