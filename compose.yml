@@ -103,6 +103,8 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
 
   prometheus:
     image: prom/prometheus:v2.30.3
@@ -110,11 +112,11 @@ services:
       - ./prometheus:/etc/prometheus
       - prometheus_data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--web.enable-lifecycle'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--web.enable-lifecycle"
     ports:
       - "9090:9090"
     depends_on:
@@ -133,9 +135,8 @@ services:
       - prometheus
 
 volumes:
-  db_data: { }
-  postgresql_data: { }
-  maven_cache: { }
-  prometheus_data: { }
-  grafana_data: { }
-
+  db_data: {}
+  postgresql_data: {}
+  maven_cache: {}
+  prometheus_data: {}
+  grafana_data: {}
