@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-
 import { FaCheck, FaExclamation } from "react-icons/fa6";
 
 interface IPaymentStatus {
@@ -24,6 +23,10 @@ function PaymentStatusPage() {
 
 	const isSuccessful = paymentStatus?.responseStatus.status === "Успех";
 
+	const handleRedirect = () => {
+		window.location.href = "http://localhost:8000";
+	};
+
 	return (
 		<motion.div className="flex self-center justify-center items-center tabletS:mx-10 mobileS:mx-5 max-w-[1200px] w-full tabletS:h-[760px] mobileS:h-[600px] tabletM:rounded-[20px] tabletS:rounded-[16px] mobileM:rounded-[12px] mobileS:rounded-[8px] bg-primary">
 			<div className="flex flex-col justify-center items-center w-full h-full gap-10">
@@ -43,7 +46,10 @@ function PaymentStatusPage() {
 						<FaExclamation className="tabletS:text-[96px] mobileM:text-[72px] mobileS:text-[48px] text-invalid" />
 					</div>
 				)}
-				<button className="tabletS:w-[275px] tabletS:h-[60px] mobileS:w-[150px] mobileS:h-[40px] bg-primaryBtn shadow-btnShadow rounded-[15px] tabletS:text-[22px] mobileS:text-[13px]">
+				<button
+					className="tabletS:w-[275px] tabletS:h-[60px] mobileS:w-[150px] mobileS:h-[40px] bg-primaryBtn shadow-btnShadow rounded-[15px] tabletS:text-[22px] mobileS:text-[13px]"
+					onClick={handleRedirect}
+				>
 					Вернуться в магазин
 				</button>
 			</div>
