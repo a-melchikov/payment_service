@@ -26,6 +26,7 @@ function BankCardForm() {
 	const [cardNumber, setCardNumber] = useState<string>("");
 	const [date, setDate] = useState<string>("");
 	const [cvc, setCvc] = useState<string>("");
+	const [shouldSave, setShouldSave] = useState<boolean>(false);
 
 	const screenWidth = useScreenWidth();
 	const shouldAnimate = screenWidth > 660;
@@ -56,7 +57,6 @@ function BankCardForm() {
 
 	const formatDate = (value: string) => {
 		const numericValue = value.replace(/\D/g, "");
-
 		const formattedValue = numericValue.slice(0, 4);
 
 		if (formattedValue.length === 1 && Number(formattedValue) > 1) {
@@ -71,7 +71,6 @@ function BankCardForm() {
 
 	const formatCvc = (value: string) => {
 		const formattedValue = value.replace(/\D/g, "");
-
 		return formattedValue;
 	};
 
@@ -80,30 +79,24 @@ function BankCardForm() {
 	) => {
 		const value = e.target.value;
 		const formattedValue = formatCardNumber(value);
-
 		setCardNumber(formattedValue);
 		setValue("cardNumber", formattedValue);
-
 		await trigger("cardNumber");
 	};
 
 	const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value;
 		const formattedValue = formatDate(value);
-
 		setDate(formattedValue);
 		setValue("date", formattedValue);
-
 		await trigger("date");
 	};
 
 	const handleCvcChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value;
 		const formattedValue = formatCvc(value);
-
 		setCvc(formattedValue);
 		setValue("cvc", formattedValue);
-
 		await trigger("cvc");
 	};
 
@@ -120,7 +113,7 @@ function BankCardForm() {
 				.padStart(2, "0")}-${newMonth.toString().padStart(2, "0")}-01`;
 
 			const response = await fetch(
-				"http://127.0.0.1:8080/api/v1/payments/bankcard",
+				`http://127.0.0.1:8080/api/v1/payments/bankcard?shouldSave=${shouldSave}`,
 				{
 					method: "POST",
 					headers: {
@@ -154,6 +147,7 @@ function BankCardForm() {
 	const handleGoBack = () => {
 		navigate(-1);
 	};
+
 
 	return (
 		<motion.div
@@ -192,6 +186,18 @@ function BankCardForm() {
 					<p className="tabletS:text-[32px] mobileM:text-[24px] mobileS:text-[20px] font-medium text-center">
 						Введите данные карты
 					</p>
+					<div className="flex items-center gap-2 mt-4">
+						<input
+							type="checkbox"
+							id="saveCard"
+							checked={shouldSave}
+							onChange={(e) => setShouldSave(e.target.checked)}
+							className="w-4 h-4"
+						/>
+						<label htmlFor="saveCard" className="text-sm">
+							Сохранить карту
+						</label>
+					</div>
 					<div className="grid grid-cols-8 grid-rows-6 self-center tabletS:w-3/4 mobileS:w-5/6 aspect-[740/400]">
 						<div
 							style={{
