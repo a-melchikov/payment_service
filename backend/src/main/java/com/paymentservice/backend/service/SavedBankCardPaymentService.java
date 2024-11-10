@@ -25,6 +25,6 @@ public class SavedBankCardPaymentService {
                 savedBankCardDto.getCardNumber());
         BankCardPaymentRequest bankCardPaymentRequest = new BankCardPaymentRequest(savedBankCard.getUserId(),
                 savedBankCard.getCardNumber(), savedBankCard.getCvv(), paymentSum, savedBankCard.getExpiryDate());
-        return bankCardProcessingService.processBankPayment(bankCardPaymentRequest);
+        return bankCardProcessingService.processBankPayment(bankCardPaymentRequest, false);
     }
 }

@@ -23,7 +23,9 @@ public class SavedBankCardService {
 
     @Transactional
     public void save(SavedBankCard savedBankCard) {
-        savedBankCardRepository.save(savedBankCard);
+        if (!savedBankCardRepository.isCardExists(savedBankCard.getUserId(), savedBankCard.getCardNumber())) {
+            savedBankCardRepository.save(savedBankCard);
+        }
     }
 
     @Transactional

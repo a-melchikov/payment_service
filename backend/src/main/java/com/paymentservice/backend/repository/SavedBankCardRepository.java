@@ -12,4 +12,6 @@ public interface SavedBankCardRepository {
     List<SavedBankCard> findSavedBankCardsByUserId(Long userId);
 
     SavedBankCard findByUserIdAndCardNumber(Long userId, String cardNumber);
+
+    boolean isCardExists(Long userId, String cardNumber);
 }

@@ -1,6 +1,7 @@
 package com.paymentservice.backend.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/payments")
@@ -26,14 +26,16 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 public class BasePaymentProcessingController {
     private final BankCardProcessingService bankProcessingService;
     private final static String CONTEXT_ATTRIBUTE_NAME = "paymentRequest";
-    
+
     @PostMapping("/bankcard")
     @Operation(summary = "Осуществить платеж по реквизитам банковской карты")
-    public BankCardPaymentResponse pay(@RequestBody BankCardPaymentRequest bankCardPaymentRequest) {
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+    public BankCardPaymentResponse pay(@RequestBody BankCardPaymentRequest bankCardPaymentRequest,
+            @RequestParam(value = "shouldSave") boolean shouldSave) {
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
+                .getRequestAttributes();
         if (requestAttributes != null) {
             requestAttributes.setAttribute(CONTEXT_ATTRIBUTE_NAME, bankCardPaymentRequest, WebRequest.SCOPE_REQUEST);
         }
-        return bankProcessingService.processBankPayment(bankCardPaymentRequest);
+        return bankProcessingService.processBankPayment(bankCardPaymentRequest, shouldSave);
     }
 }

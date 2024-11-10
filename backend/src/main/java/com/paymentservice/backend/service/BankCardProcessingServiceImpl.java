@@ -28,11 +28,13 @@ public class BankCardProcessingServiceImpl implements BankCardProcessingService 
 
     @Override
     @Transactional
-    public BankCardPaymentResponse processBankPayment(BankCardPaymentRequest bankCardPaymentRequest) {
+    public BankCardPaymentResponse processBankPayment(BankCardPaymentRequest bankCardPaymentRequest, boolean shouldSave) {
         BankCardPaymentResponse bankCardPaymentResponse = bankCardClient.makePayment(bankCardPaymentRequest);
         if (SUCCESS.equals(bankCardPaymentResponse.getResponseStatus().getStatus())) {
             saveSuccessfulTransaction(bankCardPaymentRequest, bankCardPaymentResponse);
-            saveBankCard(bankCardPaymentRequest);
+            if (shouldSave) {
+                saveBankCard(bankCardPaymentRequest);
+            }
         } else {
             saveFailedTransaction(bankCardPaymentRequest, bankCardPaymentResponse);
         }

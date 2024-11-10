@@ -59,4 +59,14 @@ public class SavedBankCardRepositoryImpl implements SavedBankCardRepository {
             return null;
         }
     }
+
+    @Override
+    public boolean isCardExists(Long userId, String cardNumber) {
+        Long count = entityManager.createQuery(
+            "SELECT COUNT(s) FROM SavedBankCard s WHERE s.userId = :userId AND s.cardNumber = :cardNumber", Long.class)
+            .setParameter("userId", userId)
+            .setParameter("cardNumber", cardNumber)
+            .getSingleResult();
+        return count > 0;
+    }
 }
