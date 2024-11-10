@@ -260,7 +260,7 @@ function BankCardForm() {
 						>
 							<div className="w-full aspect-[580/70] mt-[8%] bg-[#1E1E1E]"></div>
 							<input
-								type="text"
+								type="password"
 								placeholder="CVC"
 								{...register("cvc", {
 									required: "CVC code is required",
