@@ -18,3 +18,11 @@
 	font-weight: 400;
 	font-style: normal;
 }
+
+input[type="password"] {
+	font-family: "Verdana", sans-serif;
+}
+
+input[type="password"]::placeholder {
+	font-family: "Montserrat", sans-serif;
+}

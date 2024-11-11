@@ -17,6 +17,9 @@ export default {
 				methodCardShadow: "0 3px 10px -1px rgba(0, 0, 0, 0.35)",
 				bankCardShadow: "0 3px 12px -1px rgba(0, 0, 0, 0.25)",
 				btnShadow: "0 3px 10px -1px rgba(0, 0, 0, 0.25)",
+				methodCardShadowMobile: "0 2px 7px -1px rgba(0, 0, 0, 0.35)",
+				bankCardShadowMobile: "0 2px 8px -1px rgba(0, 0, 0, 0.25)",
+				btnShadowMobile: "0 2px 7px -1px rgba(0, 0, 0, 0.25)",
 			},
 			screens: {
 				mobileS: "320px",
@@ -30,10 +33,26 @@ export default {
 				"741/402": "741 / 402",
 				"580/360": "580 / 360",
 			},
-			fontSize: {
-				adaptive: "calc(12px + 12 * (100vw / 1200))",
-			},
 		},
 	},
-	plugins: [],
+	plugins: [
+		function ({ addUtilities }) {
+			const newUtilities = {
+				".scrollbar-thin": {
+					scrollbarWidth: "thin",
+					scrollbarColor: "#E3E3E3 white",
+				},
+				".scrollbar-webkit": {
+					"&::-webkit-scrollbar": {
+						width: "10px",
+					},
+					"&::-webkit-scrollbar-track": {
+						backgroundColor: "white",
+					},
+				},
+			};
+
+			addUtilities(newUtilities, ["responsive", "hover"]);
+		},
+	],
 };

@@ -1,18 +1,24 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { FaAngleLeft, FaRegTrashCan } from "react-icons/fa6";
+import { FaAngleLeft } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import bankCard from "../images/bank-card.svg";
 import spb from "../images/sbp.svg";
 import yoomoney from "../images/YooMoney.svg";
 import MethodCard from "../MethodCard/MethodCard";
+import SavedCardsDropdown from "../SavedCardDropdown/SavedCardDropdown";
+import fetchPaymentAmount from "../utils/fetchPaymentAmount";
 import { formatAmount } from "../utils/formatAmount";
+
+interface IPaymentData {
+	user_id: string;
+	total_price: string;
+}
 
 function PaymentMethods() {
 	const [paymentAmount, setPaymentAmount] = useState("0");
+	const [paymentData, setPaymentData] = useState<IPaymentData>();
 	const [containerWidth, setContainerWidth] = useState<number | null>(null);
-	const [savedCards, setSavedCards] = useState([]);
-	const [userId, setUserId] = useState<string | null>(null); // Состояние для userId
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const navigate = useNavigate();
 
@@ -23,123 +29,20 @@ function PaymentMethods() {
 	}, []);
 
 	useEffect(() => {
-		const fetchPaymentAmount = async () => {
+		const loadPaymentAmount = async () => {
 			try {
-				const response = await fetch("http://localhost:8000/carts/checkout/", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					credentials: "include",
-				});
-
-				if (response.status === 401) {
-					throw new Error(
-						"Пользователь не авторизован. Пожалуйста, войдите в систему."
-					);
+				const data = await fetchPaymentAmount();
+				if (data) {
+					setPaymentData(data);
+					setPaymentAmount(data.total_price);
 				}
-
-				if (!response.ok) {
-					throw new Error(
-						`Network response was not ok. Status code: ${response.status}`
-					);
-				}
-
-				const data = await response.json();
-				sessionStorage.setItem("paymentData", JSON.stringify(data));
-				setPaymentAmount(data.total_price);
-
-				setUserId(data.user_id);
 			} catch (error) {
 				console.error("Error fetching payment amount:", error);
 			}
 		};
 
-		fetchPaymentAmount();
+		loadPaymentAmount();
 	}, []);
-
-	useEffect(() => {
-		if (userId) {
-			const fetchSavedCards = async () => {
-				try {
-					const response = await fetch(
-						`http://localhost:8080/api/v1/saved-cards/${userId}`,
-						{
-							method: "GET",
-							headers: {
-								"Content-Type": "application/json",
-							},
-						}
-					);
-
-					if (!response.ok) {
-						throw new Error("Не удалось загрузить сохранённые карты");
-					}
-
-					const cards = await response.json();
-					setSavedCards(cards);
-				} catch (error) {
-					console.error("Error fetching saved cards:", error);
-				}
-			};
-
-			fetchSavedCards();
-		}
-	}, [userId]);
-
-	const deleteCard = async (cardNumber: string, event: React.MouseEvent) => {
-		event.stopPropagation();
-
-		if (!userId) return;
-
-		try {
-			const response = await fetch(`http://localhost:8080/api/v1/saved-cards`, {
-				method: "DELETE",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					cardNumber: cardNumber,
-					userId: userId,
-				}),
-			});
-
-			if (!response.ok) {
-				throw new Error("Не удалось удалить карту");
-			}
-
-			setSavedCards(
-				savedCards.filter((card) => card.cardNumber !== cardNumber)
-			);
-		} catch (error) {
-			console.error("Error deleting card:", error);
-		}
-	};
-
-	const paySavedCard = async (cardNumber: string) => {
-		if (!userId) return;
-
-		try {
-			const response = await fetch(
-				`http://localhost:8080/api/v1/saved-cards/pay?paymentSum=${paymentAmount}`,
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						cardNumber: cardNumber,
-						userId: userId,
-					}),
-				}
-			);
-			const result = await response.json();
-			sessionStorage.setItem("paymentStatus", JSON.stringify(result));
-			navigate("/bankCard/status");
-		} catch (error) {
-			console.error("Error paying", error);
-		}
-	};
 
 	const handleGoBack = () => {
 		navigate(-1);
@@ -155,7 +58,7 @@ function PaymentMethods() {
 		>
 			<motion.div
 				exit={{ opacity: 0 }}
-				className="flex flex-col flex-grow self-center items-center w-fit h-fit tabletS:gap-[30px] mobileS:gap-[20px]"
+				className="flex flex-col flex-grow self-center items-center w-fit h-fit tabletS:gap-[25px] mobileS:gap-[20px]"
 			>
 				<div
 					className="flex self-start items-center gap-2 cursor-pointer"
@@ -177,28 +80,10 @@ function PaymentMethods() {
 				</Link>
 				<MethodCard imageSource={yoomoney} text="ЮMoney" />
 
-				{savedCards.length > 0 && (
-					<div className="relative mt-4 w-full">
-						<p className="font-semibold">Сохранённые карты:</p>
-						<ul className="mt-2 border rounded bg-white shadow-md">
-							{savedCards.map((card) => (
-								<li
-									key={card.cardNumber}
-									className="px-4 py-2 flex justify-between items-center hover:bg-gray-100 cursor-pointer"
-									onClick={() => paySavedCard(card.cardNumber)}
-								>
-									<span>{card.cardNumber}</span>
-									<button
-										onClick={(event) => deleteCard(card.cardNumber, event)}
-										className="text-red-500 hover:text-red-700 p-2 block"
-									>
-										<FaRegTrashCan />
-									</button>
-								</li>
-							))}
-						</ul>
-					</div>
-				)}
+				<SavedCardsDropdown
+					paymentData={paymentData}
+					containerWidth={containerWidth}
+				/>
 
 				<div className="flex flex-col mt-auto w-full mb-12">
 					<hr className="border-0 w-full h-[2px] bg-black opacity-30 rounded" />

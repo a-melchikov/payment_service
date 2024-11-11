@@ -19,7 +19,7 @@ function MethodCard(props: IMethodCardProps) {
 			whileTap={screenWidth > 1024 ? "click" : "tap"}
 			whileHover={{ scale: 1.04, transition: { duration: 0.3 } }}
 			variants={buttonVariants}
-			className="flex items-center px-11 max-w-[450px] w-full tabletS:h-[80px] mobileS:h-[60px] shadow-methodCardShadow laptop:rounded-[20px] tabletS:rounded-[16px] mobileM:rounded-[14px] mobileS:rounded-[12px] bg-primary cursor-pointer"
+			className="flex items-center px-11 max-w-[450px] w-full tabletS:h-[80px] mobileS:h-[60px] tabletM:shadow-methodCardShadow mobileS:shadow-methodCardShadowMobile laptop:rounded-[20px] tabletS:rounded-[16px] mobileM:rounded-[14px] mobileS:rounded-[12px] bg-primary cursor-pointer"
 		>
 			<img
 				src={props.imageSource}

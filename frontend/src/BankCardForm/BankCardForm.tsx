@@ -148,7 +148,6 @@ function BankCardForm() {
 		navigate(-1);
 	};
 
-
 	return (
 		<motion.div
 			initial={{ width: containerWidth }}
@@ -159,7 +158,7 @@ function BankCardForm() {
 			className="flex self-center justify-center items-center tabletS:mx-10 mobileS:mx-5 max-w-[1200px] w-full tabletS:h-[760px] mobileS:h-[600px] tabletM:rounded-[20px] tabletS:rounded-[16px] mobileM:rounded-[12px] mobileS:rounded-[8px] bg-primary"
 		>
 			<motion.div
-				initial={{ opacity: 0, y: 50 }}
+				initial={{ opacity: 0, y: 35 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={
 					shouldAnimate
@@ -181,30 +180,19 @@ function BankCardForm() {
 				</div>
 				<form
 					onSubmit={handleSubmit(onSubmit)}
-					className="flex flex-col justify-center items-center w-full h-full tabletM:gap-5 tabletS:gap-10 mobileS:gap-14"
+					autoComplete="off"
+					className="flex flex-col justify-center items-center w-full h-full tabletM:gap-5 mobileS:gap-10"
 				>
 					<p className="tabletS:text-[32px] mobileM:text-[24px] mobileS:text-[20px] font-medium text-center">
 						Введите данные карты
 					</p>
-					<div className="flex items-center gap-2 mt-4">
-						<input
-							type="checkbox"
-							id="saveCard"
-							checked={shouldSave}
-							onChange={(e) => setShouldSave(e.target.checked)}
-							className="w-4 h-4"
-						/>
-						<label htmlFor="saveCard" className="text-sm">
-							Сохранить карту
-						</label>
-					</div>
-					<div className="grid grid-cols-8 grid-rows-6 self-center tabletS:w-3/4 mobileS:w-5/6 aspect-[740/400]">
+					<div className="grid grid-cols-8 grid-rows-6 self-center tabletS:w-[70%] mobileS:w-[80%] aspect-[740/400]">
 						<div
 							style={{
 								gridRow: "1 / 6",
 								gridColumn: "1 / 7",
 							}}
-							className="flex flex-col justify-center w-full h-auto bg-bankCardFront shadow-bankCardShadow z-10 tabletM:gap-12 mobileM:gap-14 aspect-[580/360] laptop:rounded-[20px] tabletS:rounded-[16px] mobileM:rounded-[12px] mobileS:rounded-[8px]"
+							className="flex flex-col justify-center w-full h-auto bg-bankCardFront tabletM:shadow-bankCardShadow mobileS:shadow-bankCardShadowMobile z-10 tabletM:gap-12 mobileM:gap-14 aspect-[580/360] laptop:rounded-[20px] tabletS:rounded-[16px] mobileM:rounded-[12px] mobileS:rounded-[8px]"
 						>
 							<div className="flex aspect-[422/222] self-center flex-col justify-center w-full max-w-[90%]">
 								<label
@@ -262,7 +250,7 @@ function BankCardForm() {
 						</div>
 						<div
 							style={{ gridRow: "2 / 7", gridColumn: "3 / 9" }}
-							className="flex flex-col w-full h-full bg-bankCardBack shadow-bankCardShadow z-0 aspect-[580/360] laptop:rounded-[20px] tabletS:rounded-[16px] mobileM:rounded-[12px] mobileS:rounded-[8px]"
+							className="flex flex-col w-full h-full bg-bankCardBack tabletM:shadow-bankCardShadow mobileS:shadow-bankCardShadowMobile z-0 aspect-[580/360] laptop:rounded-[20px] tabletS:rounded-[16px] mobileM:rounded-[12px] mobileS:rounded-[8px]"
 						>
 							<div className="w-full aspect-[580/70] mt-[8%] bg-[#1E1E1E]"></div>
 							<input
@@ -286,9 +274,24 @@ function BankCardForm() {
 							/>
 						</div>
 					</div>
+					<div className="flex items-center gap-2">
+						<input
+							type="checkbox"
+							id="saveCard"
+							checked={shouldSave}
+							onChange={(e) => setShouldSave(e.target.checked)}
+							className="tabletS:w-4 tabletS:h-4 mobileS:w-3 mobileS:h-3"
+						/>
+						<label
+							htmlFor="saveCard"
+							className="tabletS:text-[16px] mobileS:text-[12px]"
+						>
+							Сохранить карту
+						</label>
+					</div>
 					<motion.button
 						whileTap={{ scale: 0.95, transition: { duration: 0.1 } }}
-						className="tabletS:w-[260px] tabletS:h-[60px] mobileS:w-[160px] mobileS:h-[40px] bg-primaryBtn shadow-btnShadow rounded-[15px] tabletS:text-[24px] mobileS:text-[16px]"
+						className="tabletS:w-[200px] tabletS:h-[50px] mobileS:w-[160px] mobileS:h-[40px] bg-primaryBtn tabletM:shadow-btnShadow mobileS:shadow-btnShadowMobile rounded-[15px] tabletS:text-[24px] mobileS:text-[16px]"
 					>
 						Оплатить
 					</motion.button>
