@@ -156,24 +156,24 @@ class Command(BaseCommand):
         ]
 
         for product in product_data:
-            new_product = Product(
-                name=product["name"],
+            product_obj, created = Product.objects.get_or_create(
                 slug=product["slug"],
-                description=product["description"],
-                price=product["price"],
-                stock=product["stock"],
-                category=product["category"],
+                defaults={
+                    "name": product["name"],
+                    "description": product["description"],
+                    "price": product["price"],
+                    "stock": product["stock"],
+                    "category": product["category"],
+                },
             )
 
-            if os.path.exists(f"media/{product["image_path"]}"):
-                new_product.image = product["image_path"]
-            else:
-                self.stdout.write(
-                    self.style.WARNING(
-                        f"Изображение не найдено: {product['image_path']}"
-                    )
-                )
+            if created and os.path.exists(f"media/{product['image_path']}"):
+                product_obj.image = product["image_path"]
+                product_obj.save()
 
-            new_product.save(process_image=False)
+            elif created:
+                self.stdout.write(
+                    self.style.WARNING(f"Изображение не найдено: {product['image_path']}")
+                )
 
         self.stdout.write(self.style.SUCCESS("База данных успешно заполнена!"))
