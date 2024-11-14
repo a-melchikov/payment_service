@@ -39,6 +39,10 @@ class Product(models.Model):
 
     def save(self, *args, process_image=True, **kwargs):
         super().save(*args, **kwargs)
+
+        if not self.image or not self.image.path:
+            return
+
         if not process_image:
             return
 

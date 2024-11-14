@@ -1,3 +1,7 @@
+import datetime
+import jwt
+
+from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.http import JsonResponse
@@ -87,9 +91,16 @@ class CheckoutView(LoginRequiredMixin, View):
 
         total_price = sum(item.product.price * item.quantity for item in cart_items)
 
+        payload = {
+            'sub': request.user.id,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
+        }
+        token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+
         response_data = {
             'user_id': request.user.id,
             'total_price': total_price,
+            'payment_token': token,
         }
 
         return JsonResponse(response_data, status=200)
