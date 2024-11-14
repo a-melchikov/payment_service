@@ -16,6 +16,7 @@ interface IBankCardForm {
 interface IPaymentData {
 	user_id: string;
 	total_price: string;
+	payment_token: string;
 }
 
 function BankCardForm() {
@@ -113,20 +114,21 @@ function BankCardForm() {
 				.padStart(2, "0")}-${newMonth.toString().padStart(2, "0")}-01`;
 
 			const response = await fetch(
-				`http://127.0.0.1:8080/api/v1/payments/bankcard?shouldSave=${shouldSave}`,
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						userId: paymentData?.user_id,
-						cardNumber: cardNumber.replace(/\s/g, ""),
-						cvv: cvc,
-						paymentSum: paymentData?.total_price,
-						expiryDate: formattedExpiryDate,
-					}),
-				}
+			  `http://127.0.0.1:8080/api/v1/payments/bankcard?shouldSave=${shouldSave}`,
+			  {
+				method: "POST",
+				headers: {
+				  "Content-Type": "application/json",
+				  "Authorization": `Bearer ${paymentData?.payment_token}`,
+				},
+				body: JSON.stringify({
+				  userId: paymentData?.user_id,
+				  cardNumber: cardNumber.replace(/\s/g, ""),
+				  cvv: cvc,
+				  paymentSum: paymentData?.total_price,
+				  expiryDate: formattedExpiryDate,
+				}),
+			  }
 			);
 
 			const result = await response.json();

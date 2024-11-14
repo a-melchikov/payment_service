@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class BankCardPaymentResponse {
     private Long userId;
     private String cardNumber;
+    private String issuingBank;
     private ResponseStatus responseStatus;
 }

@@ -1,0 +1,1 @@
+ALTER TABLE saved_bank_cards ADD COLUMN issuing_bank VARCHAR(50) NOT NULL;

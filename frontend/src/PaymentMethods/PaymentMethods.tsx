@@ -13,6 +13,7 @@ import { formatAmount } from "../utils/formatAmount";
 interface IPaymentData {
 	user_id: string;
 	total_price: string;
+	payment_token: string;
 }
 
 function PaymentMethods() {

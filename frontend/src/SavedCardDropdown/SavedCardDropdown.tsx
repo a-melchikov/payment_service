@@ -16,6 +16,7 @@ interface SavedCardsDropdownProps {
 interface ICard {
 	cardNumber: string;
 	user_id: string;
+	issuingBank: string;
 }
 
 function SavedCardsDropdown({
@@ -28,6 +29,15 @@ function SavedCardsDropdown({
 		useState<string>("Сохранённые карты");
 	const [isCardSelected, setIsCardSelected] = useState(false);
 	const navigate = useNavigate();
+
+	const bankLogos = {
+		Tinkoff: "../images/",
+		VTB: "/logos/vtb.png",
+		Gazprombank: "/logos/gazprombank.png",
+		Sberbank: "/logos/sberbank.png",
+		"Alfa-Bank": "/logos/alfabank.png",
+		"Raiffeisenbank": "../images/logos/raiffeisenbank.png",
+	};
 
 	const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -151,6 +161,14 @@ function SavedCardsDropdown({
 								className="flex justify-between items-center px-4 tabletS:py-2 mobileS:py-1 hover:bg-gray-100 cursor-pointer"
 								onClick={() => chooseSavedCard(card.cardNumber)}
 							>
+								{/* Логотип банка */}
+								{bankLogos[card.issuingBank] && (
+									<img
+										src={bankLogos[card.issuingBank]}
+										alt={`${card.issuingBank} logo`}
+										className="h-6 w-6 mr-2"
+									/>
+								)}
 								<span className="tabletS:text-[16px] mobileS:text-[12px]">
 									{card.cardNumber}
 								</span>
