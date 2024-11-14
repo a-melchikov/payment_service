@@ -112,9 +112,9 @@ function BankCardForm() {
 			const formattedExpiryDate = `20${newYear
 				.toString()
 				.padStart(2, "0")}-${newMonth.toString().padStart(2, "0")}-01`;
-
+			const userId = paymentData?.user_id;
 			const response = await fetch(
-			  `http://127.0.0.1:8080/api/v1/payments/bankcard?shouldSave=${shouldSave}`,
+			  `http://127.0.0.1:8080/api/v1/payments/bankcard?shouldSave=${shouldSave}&userId=${userId}`,
 			  {
 				method: "POST",
 				headers: {

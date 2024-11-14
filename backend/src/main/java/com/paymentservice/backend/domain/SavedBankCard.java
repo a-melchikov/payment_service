@@ -35,13 +35,10 @@ public class SavedBankCard {
     @Column(name = "cvv", length = 3, nullable = false)
     private String cvv;
 
-    @Column(name = "issuing_bank", nullable = false)
-    private String issuingBank;
-
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
     public SavedBankCardDto toDto() {
-        return new SavedBankCardDto(cardNumber, userId, issuingBank);
+        return new SavedBankCardDto(cardNumber, userId);
     }
 }

@@ -16,7 +16,6 @@ interface SavedCardsDropdownProps {
 interface ICard {
 	cardNumber: string;
 	user_id: string;
-	issuingBank: string;
 }
 
 function SavedCardsDropdown({
@@ -30,15 +29,6 @@ function SavedCardsDropdown({
 	const [isCardSelected, setIsCardSelected] = useState(false);
 	const navigate = useNavigate();
 
-	const bankLogos = {
-		Tinkoff: "../images/",
-		VTB: "/logos/vtb.png",
-		Gazprombank: "/logos/gazprombank.png",
-		Sberbank: "/logos/sberbank.png",
-		"Alfa-Bank": "/logos/alfabank.png",
-		"Raiffeisenbank": "../images/logos/raiffeisenbank.png",
-	};
-
 	const toggleDropdown = () => setIsOpen(!isOpen);
 
 	useEffect(() => {
@@ -47,7 +37,7 @@ function SavedCardsDropdown({
 
 			try {
 				const response = await fetch(
-					`http://localhost:8080/api/v1/saved-cards/${paymentData.user_id}`,
+					`http://localhost:8080/api/v1/saved-cards?userId=${paymentData.user_id}`,
 					{
 						method: "GET",
 						headers: {
@@ -72,9 +62,9 @@ function SavedCardsDropdown({
 
 	const deleteCard = async (cardNumber: string, event: React.MouseEvent) => {
 		event.stopPropagation();
-
+		if (!paymentData) return;
 		try {
-			const response = await fetch(`http://localhost:8080/api/v1/saved-cards`, {
+			const response = await fetch(`http://localhost:8080/api/v1/saved-cards?userId=${paymentData.user_id}`, {
 				method: "DELETE",
 				headers: {
 					"Content-Type": "application/json",
@@ -100,9 +90,10 @@ function SavedCardsDropdown({
 	};
 
 	const paySavedCard = async (cardNumber: string) => {
+		if (!paymentData) return;
 		try {
 			const response = await fetch(
-				`http://localhost:8080/api/v1/saved-cards/pay?paymentSum=${paymentData?.total_price}`,
+				`http://localhost:8080/api/v1/saved-cards/pay?paymentSum=${paymentData?.total_price}&userId=${paymentData.user_id}`,
 				{
 					method: "POST",
 					headers: {
@@ -161,14 +152,7 @@ function SavedCardsDropdown({
 								className="flex justify-between items-center px-4 tabletS:py-2 mobileS:py-1 hover:bg-gray-100 cursor-pointer"
 								onClick={() => chooseSavedCard(card.cardNumber)}
 							>
-								{/* Логотип банка */}
-								{bankLogos[card.issuingBank] && (
-									<img
-										src={bankLogos[card.issuingBank]}
-										alt={`${card.issuingBank} logo`}
-										className="h-6 w-6 mr-2"
-									/>
-								)}
+
 								<span className="tabletS:text-[16px] mobileS:text-[12px]">
 									{card.cardNumber}
 								</span>

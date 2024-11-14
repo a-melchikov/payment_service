@@ -33,20 +33,22 @@ public class SavedCardProcessingController {
 
     @GetMapping("/{userId}")
     @Operation(summary = "Получить сохраненные банковские карты")
-    public List<SavedBankCardDto> getSavedCardByUserId(@PathVariable Long userId) {
-        return savedBankCardService.getBankCardsByUserId(userId);
+    public List<SavedBankCardDto> getSavedCardByUserId(@RequestParam(value = "userId") String userId) {
+        return savedBankCardService.getBankCardsByUserId(Long.valueOf(userId));
     }
 
     @DeleteMapping
     @Operation(summary = "Удалить сохраненную банковскую карту")
-    public void deleteSavedCard(@RequestBody SavedBankCardDto savedBankCardDto) {
+    public void deleteSavedCard(@RequestBody SavedBankCardDto savedBankCardDto,
+                                @RequestParam(value = "userId") String userId) {
         savedBankCardService.delete(savedBankCardDto);
     }
 
     @PostMapping("/pay")
     @Operation(summary = "Осуществить платеж по сохраненной банковской карты")
     public BankCardPaymentResponse pay(@RequestBody SavedBankCardDto savedBankCardDto,
-            @RequestParam(value = "paymentSum") BigDecimal paymentSum) {
+            @RequestParam(value = "paymentSum") BigDecimal paymentSum,
+            @RequestParam(value = "userId") String userId) {
         return savedBankcardPaymentService.processPayment(savedBankCardDto, paymentSum);
     }
 }

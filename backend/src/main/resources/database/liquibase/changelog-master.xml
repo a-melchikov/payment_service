@@ -17,8 +17,4 @@
     <changeSet id="3" author="Alexander Korepanov">
         <sqlFile path="database/create-table/saved_bank_cards.sql"/>
     </changeSet>
-
-    <changeSet id="4" author="Alexander Korepanov">
-        <sqlFile path="database/alter-table/saved_bank_cards.sql"/>
-    </changeSet>
 </databaseChangeLog>

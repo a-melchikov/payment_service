@@ -12,5 +12,4 @@ import lombok.Setter;
 public class SavedBankCardDto {
     private String cardNumber;
     private Long userId;
-    private String issuingBank;
 }

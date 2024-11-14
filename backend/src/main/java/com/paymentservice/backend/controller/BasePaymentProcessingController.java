@@ -30,7 +30,8 @@ public class BasePaymentProcessingController {
     @PostMapping("/bankcard")
     @Operation(summary = "Осуществить платеж по реквизитам банковской карты")
     public BankCardPaymentResponse pay(@RequestBody BankCardPaymentRequest bankCardPaymentRequest,
-            @RequestParam(value = "shouldSave") boolean shouldSave) {
+            @RequestParam(value = "shouldSave") boolean shouldSave,
+            @RequestParam(value = "userId") String userId) {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
                 .getRequestAttributes();
         if (requestAttributes != null) {
