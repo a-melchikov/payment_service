@@ -23,7 +23,6 @@ public class SavedBankCardRepositoryImpl implements SavedBankCardRepository {
     @Transactional
     public void save(SavedBankCard savedBankCard) {
         if (savedBankCard.getId() == null) {
-            log.info("Persisting new saved bank card for userId: {}", savedBankCard.getUserId());
             try {
                 entityManager.persist(savedBankCard);
                 log.info("Successfully persisted new saved bank card for userId: {}", savedBankCard.getUserId());

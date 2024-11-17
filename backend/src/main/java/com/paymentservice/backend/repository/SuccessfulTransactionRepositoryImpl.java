@@ -20,7 +20,6 @@ public class SuccessfulTransactionRepositoryImpl implements SuccessfulTransactio
     @Override
     @Transactional
     public void save(SuccessfulTransaction successfulTransaction) {
-        log.info("Saving successful transaction with ID: {}", successfulTransaction.getId());
         try {
             entityManager.persist(successfulTransaction);
             log.info("Successfully saved successful transaction with ID: {}", successfulTransaction.getId());

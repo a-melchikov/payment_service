@@ -20,7 +20,6 @@ public class FailedTransactionRepositoryImpl implements FailedTransactionReposit
     @Override
     @Transactional
     public void save(FailedTransaction failedTransaction) {
-        log.info("Saving failed transaction with ID: {}", failedTransaction.getId());
         try {
             entityManager.persist(failedTransaction);
             log.info("Successfully saved failed transaction with ID: {}", failedTransaction.getId());
