@@ -23,6 +23,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+        String requestPath = request.getRequestURI();
+        if (requestPath.startsWith("/actuator")) {
+            chain.doFilter(request, response);
+            return;
+        }
         String token = request.getHeader("Authorization");
         String userId = request.getParameter("userId");
         if (token == null) {
