@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Service
 public class JwtValidator {
-    private final String SECRET_KEY = "your_secret_key";
+    private final String SECRET_KEY = "5rxq2ol^os!x9nks)pw9$z2w+71k8#$f&x0^&%utoj=8sgxef";
 
     private Claims extractClaims(String token) {
         return Jwts.parser()

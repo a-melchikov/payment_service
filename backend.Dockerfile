@@ -5,8 +5,8 @@ WORKDIR /app
 COPY ./backend /app/backend
 COPY ./backend-commons /app/backend-commons
 
-RUN mvn -f /app/backend-commons/pom.xml install -DskipTests
-RUN mvn -f /app/backend/pom.xml package -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn -f /app/backend-commons/pom.xml install -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn -f /app/backend/pom.xml package -DskipTests
 
 FROM openjdk:17
 

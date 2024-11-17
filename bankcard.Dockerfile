@@ -5,8 +5,8 @@ WORKDIR /app
 COPY ./bank_card /app/bank_card
 COPY ./backend-commons /app/backend-commons
 
-RUN mvn -f /app/backend-commons/pom.xml install -DskipTests
-RUN mvn -f /app/bank_card/pom.xml package -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn -f /app/backend-commons/pom.xml install -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn -f /app/bank_card/pom.xml package -DskipTests
 
 FROM openjdk:17
 
