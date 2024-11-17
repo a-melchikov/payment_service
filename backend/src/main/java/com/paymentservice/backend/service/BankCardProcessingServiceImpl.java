@@ -2,6 +2,8 @@ package com.paymentservice.backend.service;
 
 import java.time.LocalDateTime;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class BankCardProcessingServiceImpl implements BankCardProcessingService {
+    private static final Logger log = LoggerFactory.getLogger(BankCardProcessingServiceImpl.class);
     private final FailedTransactionRepository failedTransactionRepository;
     private final SuccessfulTransactionRepository successfulTransactionRepository;
     private final SavedBankCardService savedBankCardService;
@@ -29,13 +32,19 @@ public class BankCardProcessingServiceImpl implements BankCardProcessingService 
     @Override
     @Transactional
     public BankCardPaymentResponse processBankPayment(BankCardPaymentRequest bankCardPaymentRequest, boolean shouldSave) {
+        log.info("Start processing payment for userId: {}, cardNumber: {}", bankCardPaymentRequest.getUserId(), bankCardPaymentRequest.getCardNumber());
         BankCardPaymentResponse bankCardPaymentResponse = bankCardClient.makePayment(bankCardPaymentRequest);
         if (SUCCESS.equals(bankCardPaymentResponse.getResponseStatus().getStatus())) {
+            log.info("Payment successful for userId: {}, cardNumber: {}", bankCardPaymentRequest.getUserId(), bankCardPaymentRequest.getCardNumber());
             saveSuccessfulTransaction(bankCardPaymentRequest, bankCardPaymentResponse);
             if (shouldSave) {
+                log.info("Saving card information for userId: {}", bankCardPaymentRequest.getUserId());
                 saveBankCard(bankCardPaymentRequest);
             }
         } else {
+            log.info("Payment failed for userId: {}, cardNumber: {}. Error: {}",
+                    bankCardPaymentRequest.getUserId(), bankCardPaymentRequest.getCardNumber(),
+                    bankCardPaymentResponse.getResponseStatus().getMessage());
             saveFailedTransaction(bankCardPaymentRequest, bankCardPaymentResponse);
         }
         return bankCardPaymentResponse;

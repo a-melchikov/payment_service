@@ -2,6 +2,8 @@ package com.paymentservice.backend.service;
 
 import java.math.BigDecimal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,11 +18,13 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class SavedBankCardPaymentService {
+    private static final Logger log = LoggerFactory.getLogger(SavedBankCardPaymentService.class);
     private final SavedBankCardRepository savedBankCardRepository;
     private final BankCardProcessingService bankCardProcessingService;
 
     @Transactional
     public BankCardPaymentResponse processPayment(SavedBankCardDto savedBankCardDto, BigDecimal paymentSum) {
+        log.info("Payment with saved card for userId: {} with card number: {}", savedBankCardDto.getUserId(), savedBankCardDto.getCardNumber());
         SavedBankCard savedBankCard = savedBankCardRepository.findByUserIdAndCardNumber(savedBankCardDto.getUserId(),
                 savedBankCardDto.getCardNumber());
         BankCardPaymentRequest bankCardPaymentRequest = new BankCardPaymentRequest(savedBankCard.getUserId(),
