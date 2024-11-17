@@ -42,6 +42,7 @@ function SavedCardsDropdown({
 						method: "GET",
 						headers: {
 							"Content-Type": "application/json",
+							"Authorization": `Bearer ${paymentData?.payment_token}`,
 						},
 					}
 				);
@@ -68,6 +69,7 @@ function SavedCardsDropdown({
 				method: "DELETE",
 				headers: {
 					"Content-Type": "application/json",
+					"Authorization": `Bearer ${paymentData?.payment_token}`,
 				},
 				body: JSON.stringify({
 					cardNumber: cardNumber,
@@ -98,6 +100,7 @@ function SavedCardsDropdown({
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
+						"Authorization": `Bearer ${paymentData?.payment_token}`,
 					},
 					body: JSON.stringify({
 						cardNumber: cardNumber,

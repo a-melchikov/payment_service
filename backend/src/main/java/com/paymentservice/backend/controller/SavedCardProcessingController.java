@@ -31,7 +31,7 @@ public class SavedCardProcessingController {
     private final SavedBankCardService savedBankCardService;
     private final SavedBankCardPaymentService savedBankcardPaymentService;
 
-    @GetMapping("/{userId}")
+    @GetMapping
     @Operation(summary = "Получить сохраненные банковские карты")
     public List<SavedBankCardDto> getSavedCardByUserId(@RequestParam(value = "userId") String userId) {
         return savedBankCardService.getBankCardsByUserId(Long.valueOf(userId));

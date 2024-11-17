@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -23,8 +25,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String token = request.getHeader("Authorization");
         String userId = request.getParameter("userId");
-
-        if (token != null && userId != null && jwtValidator.validateToken(token, userId)) {
+        if (token == null) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write("Invalid token or userId");
+        }
+        token = token.replace("Bearer ", "");
+        if (userId != null && jwtValidator.validateToken(token, userId)) {
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userId, null, null);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
         } else {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());

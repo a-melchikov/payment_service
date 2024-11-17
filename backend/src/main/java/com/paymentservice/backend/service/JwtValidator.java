@@ -10,11 +10,11 @@ import java.util.Date;
 
 @Service
 public class JwtValidator {
-    private final String SECRET_KEY = "5rxq2ol^os!x9nks)pw9$z2w+71k8#$f&x0^&%utoj=8sgxef";
+    private final String SECRET_KEY = "TK18ntSBHfUQS6oTe8T1gusKvlcIZ7EALwKtsHlGgKk";
 
     private Claims extractClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(SECRET_KEY)
+                .setSigningKey(SECRET_KEY.getBytes())
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -26,8 +26,6 @@ public class JwtValidator {
     private boolean isTokenExpired(String token) {
         Date nowDateTime = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
         Date tokenDateTime = extractClaims(token).getExpiration();
-        System.out.println(nowDateTime);
-        System.out.println(tokenDateTime);
         return tokenDateTime.before(nowDateTime);
     }
 
@@ -36,7 +34,7 @@ public class JwtValidator {
             String tokenUserId = extractUserId(token);
             return tokenUserId.equals(userId) && !isTokenExpired(token);
         } catch (Exception e) {
-            System.out.println("Invalid token");
+            e.printStackTrace();
             return false;
         }
     }
