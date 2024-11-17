@@ -81,6 +81,8 @@ services:
       - "prometheus.io/scrape=true"
       - "prometheus.io/port=8080"
       - "prometheus.io/path=/actuator/prometheus"
+    env_file:
+      - .env
 
   bank-card-app:
     build:

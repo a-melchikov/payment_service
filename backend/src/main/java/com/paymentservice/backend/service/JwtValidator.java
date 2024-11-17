@@ -2,6 +2,7 @@ package com.paymentservice.backend.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -10,7 +11,8 @@ import java.util.Date;
 
 @Service
 public class JwtValidator {
-    private final String SECRET_KEY = "TK18ntSBHfUQS6oTe8T1gusKvlcIZ7EALwKtsHlGgKk";
+    @Value("${secret.key}")
+    private String SECRET_KEY;
 
     private Claims extractClaims(String token) {
         return Jwts.parser()
