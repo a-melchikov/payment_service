@@ -1,9 +1,19 @@
-from pathlib import Path
+import os
+import logging
 
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "TK18ntSBHfUQS6oTe8T1gusKvlcIZ7EALwKtsHlGgKk"
+SECRET_KEY = os.getenv("SECRET_KEY", None)
+if SECRET_KEY is None:
+    logging.error("SECRET_KEY not found in .env")
+    SECRET_KEY = "default-key"
+else:
+    logging.info("SECRET_KEY is setting")
 
 DEBUG = True
 
