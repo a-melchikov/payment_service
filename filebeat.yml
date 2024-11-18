@@ -1,10 +1,18 @@
 filebeat.inputs:
-  - type: container
+  - type: log
+    enabled: true
     paths:
-      - /var/lib/docker/containers/*/*.log
-    processors:
-      - add_docker_metadata: ~
-    exclude_files: ['.gz$']
+      - /usr/share/logs/app.log
+    multiline.pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'
+    multiline.negate: true
+    multiline.match: after
 
-output.logstash:
-  hosts: ["logstash:5044"]
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  index: "backend-logs"
+
+setup.kibana:
+  host: "http://kibana:5601"
+
+setup.template.name: "backend-logs"
+setup.template.pattern: "backend-logs"

@@ -1,26 +1,12 @@
 <configuration>
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <append>true</append>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <appender name="FILEBEAT" class="net.logstash.logback.appender.LoggingEventCompositeJsonEncoder">
-        <destination>file:/var/log/application.log</destination>
-        <encoder>
-            <providers>
-                <timestamp />
-                <level />
-                <loggerName />
-                <message />
-                <threadName />
-                <stackTrace />
-            </providers>
-        </encoder>
-    </appender>
-
     <root level="info">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILEBEAT" />
+        <appender-ref ref="FILE" />
     </root>
 </configuration>
