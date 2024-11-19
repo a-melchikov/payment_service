@@ -20,5 +20,7 @@
     <logger name="o.s.w.s.ServletContextInitializerBeans" level="INFO"/>
     <logger name="o.s.w.s.m.m.a.RequestMappingHandlerMapping" level="INFO"/>
     <logger name="org.hibernate.SQL" level="INFO"/>
+    <logger name="reactor" level="INFO" />
+    <logger name="org.springframework.http" level="INFO" />
     <logger name="org.springframework.web.servlet.DispatcherServlet" level="INFO"/>
 </configuration>
