@@ -57,8 +57,27 @@
                     <p class="card-text">Итого: <strong class="total-price">{{ total_price }} ₽</strong></p>
                     <form id="checkout-form" method="post" action="{% url 'checkout' %}">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-dark btn-block">Перейти к оплате</button>
+                        <button type="button" class="btn btn-dark btn-block" id="open-payment-modal">
+                            Перейти к оплате
+                        </button>
                     </form>
+                    <div id="payment-modal" style="display: none; position: fixed; top: 0; left: 0; 
+                        width: 100%; 
+                        height: 100%; 
+                        background: linear-gradient(
+                            -37deg,
+                            rgba(188, 214, 229, 0.94) 0%,
+                            rgba(38, 152, 225, 0.94) 25%,
+                            rgba(22, 137, 210, 0.94) 50%,
+                            rgba(38, 152, 225, 0.94) 75%,
+                            rgba(188, 214, 229, 0.94) 100%
+                        ); z-index: 1000;">
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                            width: 90%; max-width: 800px; height: 90%; max-height: 800px; background: white; 
+                            border-radius: 10px; overflow: hidden;">
+                            <iframe id="payment-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -152,6 +171,22 @@
         .catch((error) => {
             console.error('Error:', error);
         });
+    });
+
+    document.getElementById('open-payment-modal').addEventListener('click', function () {
+        const modal = document.getElementById('payment-modal');
+        const iframe = document.getElementById('payment-iframe');
+
+        iframe.src = "http://localhost:5173/";
+
+        modal.style.display = 'block';
+    });
+    
+    document.getElementById('payment-modal').addEventListener('click', function (event) {
+        if (event.target === this) {
+            this.style.display = 'none';
+            document.getElementById('payment-iframe').src = '';
+        }
     });
 
     function getCookie(name) {
