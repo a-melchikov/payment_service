@@ -31,7 +31,7 @@ function PaymentStatusPage() {
 	const isSuccessful = paymentStatus?.responseStatus.status === "Успех";
 
 	const handleRedirect = () => {
-		window.location.href = "http://localhost:8000";
+		window.top.postMessage("close-window", "http://localhost:8000");
 	};
 
 	return (

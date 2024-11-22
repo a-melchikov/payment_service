@@ -73,9 +73,9 @@
                             rgba(188, 214, 229, 0.94) 100%
                         ); z-index: 1000;">
                         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                            width: 90%; max-width: 800px; height: 90%; max-height: 800px; background: white; 
-                            border-radius: 10px; overflow: hidden;">
-                            <iframe id="payment-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+                            width: 100%; max-width: 1200px; height: 100%;
+                            border-radius: 10px;">
+                            <iframe id="payment-iframe" src="" scrolling="no" style="width: 100%; height: 100%; border: none;"></iframe>
                         </div>
                     </div>
                 </div>
@@ -117,6 +117,16 @@
     function submitForm(form) {
         form.submit();
     }
+
+    window.addEventListener('message', event => {
+        if (event.origin !== "http://localhost:5173") return;
+
+        if (event.data === "close-window") {
+            const modal = document.getElementById('payment-modal');
+            modal.style.display = 'none';
+            document.getElementById('payment-iframe').src = '';
+        }
+    });
 
     document.querySelectorAll('.quantity-minus').forEach(function(button) {
         button.addEventListener('click', function() {

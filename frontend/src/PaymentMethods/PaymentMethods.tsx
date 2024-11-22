@@ -46,7 +46,7 @@ function PaymentMethods() {
 	}, []);
 
 	const handleGoBack = () => {
-		navigate(-1);
+		window.top.postMessage("close-window", "http://localhost:8000");
 	};
 
 	return (
