@@ -19,12 +19,15 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - postgresql_data:/var/lib/postgresql/data
+      - ./scripts:/scripts
     command: >
       bash -c "
       docker-entrypoint.sh postgres &
       sleep 5 &&
       psql -U postgres -tc \"SELECT 1 FROM pg_database WHERE datname = '${POSTGRES_DB_BACKEND}'\" | grep -q 1 || psql -U postgres -c 'CREATE DATABASE ${POSTGRES_DB_BACKEND};' &&
       psql -U postgres -tc \"SELECT 1 FROM pg_database WHERE datname = '${POSTGRES_DB_BANK_CARD}'\" | grep -q 1 || psql -U postgres -c 'CREATE DATABASE ${POSTGRES_DB_BANK_CARD};' &&
+      sleep 2 &&
+      psql -U postgres -d ${POSTGRES_DB_BACKEND} -f /scripts/init_trigger.sql &&
       wait
       "
 
@@ -49,11 +52,8 @@ services:
       else 
         echo 'Database population failed or command not found'; 
       fi && 
-      if poetry run python manage.py runserver 0.0.0.0:8000; then 
-        echo 'Server started on port 8000'; 
-      else 
-        echo 'Server failed to start'; 
-      fi
+      (poetry run python manage.py listen_to_transactions &) && 
+      poetry run python manage.py runserver 0.0.0.0:8000
       "
     restart: unless-stopped
     environment:
