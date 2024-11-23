@@ -22,22 +22,27 @@
                             {% csrf_token %}
                             <div class="d-flex align-items-center">
                                 <button type="button" class="btn btn-outline-secondary quantity-minus" {% if max_quantity <= 0 %}disabled{% endif %}>-</button>
-                                <input type="number" id="quantity" name="quantity" class="form-control mx-2 text-center quantity-input" value="{{ current_quantity }}" min="1" max="{{ max_quantity }}" style="width: 60px;" required>
+                                <input type="number" id="quantity-{{ cart_item.id }}" name="quantity" 
+                                       class="form-control mx-2 text-center quantity-input" 
+                                       value="{{ current_quantity }}" 
+                                       min="1" max="{{ max_quantity }}" 
+                                       style="width: 60px;" required>
                                 <button type="button" class="btn btn-outline-secondary quantity-plus" {% if max_quantity <= 0 %}disabled{% endif %}>+</button>
                             </div>
-                            <button type="submit" class="btn btn-success btn-block mt-2">Обновить в корзине</button>
+                            <button type="submit" class="btn btn-success btn-block mt-2 update-cart-button" disabled>Обновить в корзине</button>
                         </form>
+                        
                     {% else %}
                         {% if can_add_to_cart %}
-                            <form method="post" action="{% url 'add-to-cart' product.id %}" class="update-cart-form">
+                            <form method="post" action="{% url 'add-to-cart' product.id %}" class="add-to-cart-form">
                                 {% csrf_token %}
                                 <div class="d-flex align-items-center">
-                                    <button type="button" class="btn btn-outline-secondary quantity-minus" {% if max_quantity <= 0 %}disabled{% endif %}>-</button>
-                                    <input type="number" id="quantity" name="quantity" class="form-control mx-2 text-center quantity-input" value="{{ current_quantity }}" min="1" max="{{ max_quantity }}" style="width: 60px;" required>
-                                    <button type="button" class="btn btn-outline-secondary quantity-plus" {% if max_quantity <= 0 %}disabled{% endif %}>+</button>
+                                    <button type="button" class="btn btn-outline-secondary quantity-minus">-</button>
+                                    <input type="number" id="quantity" name="quantity" class="form-control mx-2 text-center quantity-input" value="1" min="1" max="{{ max_quantity }}" required>
+                                    <button type="button" class="btn btn-outline-secondary quantity-plus">+</button>
                                 </div>
                                 <button type="submit" class="btn btn-success btn-block mt-2">Добавить в корзину</button>
-                            </form>                
+                            </form>
                         {% else %}
                             <p class="text-danger">К сожалению, данный товар недоступен для добавления в корзину.</p>
                         {% endif %}
@@ -48,6 +53,13 @@
             </div>
         </div>
         <a href="{% url 'product-list' %}" class="btn btn-secondary btn-back-to-products">Назад к списку продуктов</a>
+    </div>
+</div>
+<div id="payment-modal" class="modal">
+    <div class="modal-content">
+        <button class="modal-close" id="modal-close-button">&times;</button>
+        <h3>Операция завершена</h3>
+        <p>Ваш товар успешно добавлен в корзину!</p>
     </div>
 </div>
 <style>
@@ -74,41 +86,138 @@
         box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
         outline: none;
     }
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .modal.show {
+        display: block;
+    }
+
+    .modal-content {
+        position: absolute;
+        top: 7%;
+        left: 50%;
+        transform: translate(-50%, 0);
+        width: 80%;
+        max-width: 500px;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+    }
 </style>
 
 <script>
-    document.querySelectorAll('.quantity-minus').forEach(function(button) {
-        button.addEventListener('click', function() {
-            var input = this.nextElementSibling;
-            var currentValue = parseInt(input.value);
-            if (currentValue > 1) {
-                input.value = currentValue - 1;
-            }
-        });
-    });
-    
-    document.querySelectorAll('.quantity-plus').forEach(function(button) {
-        button.addEventListener('click', function() {
-            var input = this.previousElementSibling;
-            var currentValue = parseInt(input.value);
-            var maxValue = parseInt(input.max);
-            if (currentValue < maxValue) {
-                input.value = currentValue + 1;
-            }
-        });
-    });
-    
-    document.querySelectorAll('.quantity-input').forEach(function(input) {
-        input.addEventListener('change', function() {
-            if (parseInt(this.value) < 1) {
-                this.value = 1;
-            }
-            var maxValue = parseInt(this.max);
-            if (parseInt(this.value) > maxValue) {
-                this.value = maxValue;
-            }
-        });
-    });    
-</script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('payment-modal');
+        const closeButton = document.getElementById('modal-close-button');
+        const quantityMinusButtons = document.querySelectorAll('.quantity-minus');
+        const quantityPlusButtons = document.querySelectorAll('.quantity-plus');
+        const quantityInputs = document.querySelectorAll('.quantity-input');
 
+        function showModal() {
+            modal.classList.add('show');
+            setTimeout(() => {
+                modal.classList.remove('show');
+            }, 2000);
+        }
+
+        if (closeButton) {
+            closeButton.addEventListener('click', () => {
+                modal.classList.remove('show');
+            });
+        }
+
+        function toggleUpdateButton(input) {
+            const form = input.closest('.update-cart-form');
+            const updateButton = form.querySelector('.update-cart-button');
+            const initialQuantity = parseInt(input.defaultValue);
+            const currentQuantity = parseInt(input.value);
+
+            if (currentQuantity === initialQuantity || isNaN(currentQuantity)) {
+                updateButton.disabled = true;
+            } else {
+                updateButton.disabled = false;
+            }
+        }
+
+        quantityMinusButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const input = button.nextElementSibling;
+                if (input && input.value > 1) {
+                    input.value = parseInt(input.value) - 1;
+                    toggleUpdateButton(input);
+                }
+            });
+        });
+
+        quantityPlusButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const input = button.previousElementSibling;
+                const maxValue = parseInt(input.max);
+                if (input && parseInt(input.value) < maxValue) {
+                    input.value = parseInt(input.value) + 1;
+                    toggleUpdateButton(input);
+                }
+            });
+        });
+
+        quantityInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                const maxValue = parseInt(input.max);
+                if (input.value < 1) {
+                    input.value = 1;
+                } else if (input.value > maxValue) {
+                    input.value = maxValue;
+                }
+                toggleUpdateButton(input);
+            });
+
+            toggleUpdateButton(input);
+        });
+
+        document.querySelectorAll('.add-to-cart-form, .update-cart-form').forEach(form => {
+            form.addEventListener('submit', event => {
+                event.preventDefault();
+                const formData = new FormData(form);
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': form.querySelector('[name="csrfmiddlewaretoken"]').value
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showModal();
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            alert(data.error || 'Ошибка при обработке запроса');
+                        }
+                    })
+                    .catch(error => console.error('Ошибка:', error));
+            });
+        });
+    });
+</script>
 {% endblock %}

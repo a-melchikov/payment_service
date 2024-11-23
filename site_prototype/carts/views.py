@@ -34,7 +34,6 @@ class CartListView(LoginRequiredMixin, ListView):
 class AddToCartView(LoginRequiredMixin, CreateView):
     model = Cart
     fields = ["quantity"]
-    success_url = reverse_lazy("cart-list")
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -50,24 +49,21 @@ class AddToCartView(LoginRequiredMixin, CreateView):
         if existing_cart_item:
             new_quantity = existing_cart_item.quantity + quantity_to_add
             if new_quantity > product.stock:
-                form.add_error(
-                    "quantity",
-                    f"Доступно только {product.stock} штук на складе, у вас в корзине: {existing_cart_item.quantity}.",
-                )
-                return self.form_invalid(form)
+                return JsonResponse({'success': False, 'error': f"Доступно только {product.stock} штук на складе, у вас в корзине: {existing_cart_item.quantity}."})
 
             existing_cart_item.quantity = new_quantity
             existing_cart_item.save()
+            return JsonResponse({'success': True, 'action': 'updated', 'new_quantity': new_quantity})
         else:
             if quantity_to_add > product.stock:
-                form.add_error(
-                    "quantity", f"Доступно только {product.stock} штук на складе."
-                )
-                return self.form_invalid(form)
+                return JsonResponse({'success': False, 'error': f"Доступно только {product.stock} штук на складе."})
 
-            return super().form_valid(form)
+            form.instance.quantity = quantity_to_add
+            form.instance.save()
+            return JsonResponse({'success': True, 'action': 'added', 'new_quantity': quantity_to_add})
 
-        return redirect(self.success_url)
+        return JsonResponse({'success': False, 'error': 'Unknown error'})
+
 
 
 class RemoveFromCartView(LoginRequiredMixin, DeleteView):
@@ -115,9 +111,13 @@ class UpdateCartView(View):
 
             if new_quantity <= 0:
                 cart_item.delete()
+                return JsonResponse({'success': True, 'action': 'deleted'})  # Удалили товар
             elif new_quantity <= cart_item.product.stock:
                 cart_item.quantity = new_quantity
                 cart_item.save()
+                return JsonResponse({'success': True, 'action': 'updated', 'new_quantity': new_quantity})
         except ValueError:
             pass
-        return redirect("cart-list")
+        return JsonResponse({'success': False, 'error': 'Invalid quantity'})
+
+
