@@ -2,51 +2,59 @@
 
 {% block content %}
 <div class="container">
-    <h2 class="my-4">Регистрация</h2>
+    <h2 class="my-4 text-center">Регистрация</h2>
     <form method="post" class="needs-validation" novalidate>
         {% csrf_token %}
 
-        <div class="form-group">
-            {{ form.username.label_tag }}
+        <div class="form-group mb-3">
+            <label for="username" class="form-label">Имя пользователя</label>
             {{ form.username }}
             {% if form.username.errors %}
                 <div class="invalid-feedback d-block">
-                    {{ form.username.errors }}
+                    {% for error in form.username.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
                 </div>
             {% endif %}
         </div>
 
-        <div class="form-group">
-            {{ form.password1.label_tag }}
+        <div class="form-group mb-3">
+            <label for="password1" class="form-label">Пароль</label>
             {{ form.password1 }}
             {% if form.password1.errors %}
                 <div class="invalid-feedback d-block">
-                    {{ form.password1.errors }}
+                    {% for error in form.password1.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
                 </div>
             {% endif %}
         </div>
 
-        <div class="form-group">
-            {{ form.password2.label_tag }}
+        <div class="form-group mb-3">
+            <label for="password2" class="form-label">Повторите пароль</label>
             {{ form.password2 }}
             {% if form.password2.errors %}
                 <div class="invalid-feedback d-block">
-                    {{ form.password2.errors }}
+                    {% for error in form.password2.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
                 </div>
             {% endif %}
         </div>
 
-        <div class="form-group">
-            {{ form.birth_date.label_tag }}
+        <div class="form-group mb-3">
+            <label for="birth_date" class="form-label">Дата рождения</label>
             {{ form.birth_date }}
             {% if form.birth_date.errors %}
                 <div class="invalid-feedback d-block">
-                    {{ form.birth_date.errors }}
+                    {% for error in form.birth_date.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
                 </div>
             {% endif %}
         </div>
 
-        <button type="submit" class="btn btn-primary mt-3">Зарегистрироваться</button>
+        <button type="submit" class="btn btn-primary btn-block mt-3">Зарегистрироваться</button>
     </form>
 </div>
 {% endblock %}

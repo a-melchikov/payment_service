@@ -4,15 +4,24 @@
 
 {% block content %}
 <div class="container">
-    <h2>Профиль {{ user.username }}</h2>
-    <p>Имя пользователя: {{ user.username }}</p>
-    <p>Дата рождения: {{ user.birth_date }}</p>
-    <p>Дата регистрации: {{ user.date_joined }}</p>
-    
-    <a href="{% url 'password_change' %}" class="btn btn-warning">Изменить пароль</a>
-    <form method="post" action="{% url 'logout' %}" style="display: inline">
-        {% csrf_token %}
-        <button class="btn btn-danger" type="submit">Выйти</button>
-      </form>
+    <h2 class="my-4 text-center">Профиль пользователя</h2>
+
+    <div class="card shadow-sm">
+        <div class="card-header text-center bg-light text-dark">
+            <h4>{{ user.username }}</h4>
+        </div>
+        <div class="card-body">
+            <p><strong>Имя пользователя:</strong> {{ user.username }}</p>
+            <p><strong>Дата рождения:</strong> {{ user.birth_date }}</p>
+            <p><strong>Дата регистрации:</strong> {{ user.date_joined }}</p>
+        </div>
+        <div class="card-footer text-center">
+          <a href="{% url 'password_change' %}" class="btn btn-outline-secondary btn-block mb-2">Изменить пароль</a>
+          <form method="post" action="{% url 'logout' %}" style="display: inline;">
+              {% csrf_token %}
+              <button class="btn btn-outline-danger btn-block" type="submit">Выйти</button>
+          </form>
+        </div>
+    </div>
 </div>
 {% endblock %}

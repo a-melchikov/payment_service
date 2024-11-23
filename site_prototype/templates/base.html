@@ -11,14 +11,21 @@
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}" />
   </head>
   <body>
     <header>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
         <div class="container">
           <!-- Домашняя страница (главная) -->
           <a class="navbar-brand" href="{% url 'product-list' %}">
-            <img src="{% static 'img/home-icon.png' %}" alt="Главная" width="30" height="30" />
+            <img src="{% static 'img/home-icon.png' %}" alt="Главная" />
           </a>
 
           <button
@@ -46,11 +53,27 @@
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  <img src="{% static 'img/menu-icon.png' %}" alt="Меню" width="30" height="30" />
+                  <img src="{% static 'img/menu-icon.png' %}" alt="Меню" />
                 </a>
-                <div class="dropdown-menu scrollable-menu" aria-labelledby="menuDropdown">
+                <div
+                  class="dropdown-menu scrollable-menu"
+                  aria-labelledby="menuDropdown"
+                  style="max-height: 300px; overflow-y: auto;"
+                >
                   {% for category in categories %}
-                  <a class="dropdown-item" href="{% url 'category-detail' category.slug %}">
+                  <a
+                    class="dropdown-item"
+                    href="{% url 'category-detail' category.slug %}"
+                  >
+                    {% if category.icon %}
+                    <img
+                      src="{% static category.icon %}"
+                      alt="{{ category.name }}"
+                      width="20"
+                      height="20"
+                      class="mr-2"
+                    />
+                    {% endif %}
                     {{ category.name }}
                   </a>
                   {% endfor %}
@@ -59,17 +82,28 @@
 
               <!-- Форма поиска -->
               <li class="nav-item">
-                <form class="form-inline" method="GET" action="{% url 'product-list' %}">
+                <form
+                  class="form-inline"
+                  method="GET"
+                  action="{% url 'product-list' %}"
+                  onsubmit="showLoader()"
+                >
                   <input
-                      class="form-control search-input mr-sm-2"
-                      type="search"
-                      name="q"
-                      value="{{ query }}"
-                      placeholder="Поиск"
-                      aria-label="Поиск"
+                    class="form-control search-input mr-sm-2"
+                    type="search"
+                    name="q"
+                    value="{{ query }}"
+                    placeholder="Поиск"
+                    aria-label="Поиск"
                   />
-                  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Найти</button>
-                </form>              
+                  <button
+                    class="btn btn-outline-success my-2 my-sm-0"
+                    type="submit"
+                  >
+                    Найти
+                  </button>
+                </form>
+                <div id="loader" style="display: none;">Идет поиск...</div>
               </li>
             </ul>
 
@@ -78,26 +112,42 @@
               {% if user.is_authenticated %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'cart-list' %}">
-                  <img src="{% static 'img/cart-icon.png' %}" alt="Корзина" width="30" height="30" />
+                  <img
+                    src="{% static 'img/cart-icon.png' %}"
+                    alt="Корзина"
+                  />
                 </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'profile' %}">
-                  <img src="{% static 'img/user-icon.png' %}" alt="Профиль" width="30" height="30" />
+                  <img
+                    src="{% static 'img/user-icon.png' %}"
+                    alt="Профиль"
+                  />
                 </a>
               </li>
               <li class="nav-item">
-                <form method="post" action="{% url 'logout' %}" style="display: inline">
+                <form
+                  method="post"
+                  action="{% url 'logout' %}"
+                  style="display: inline"
+                >
                   {% csrf_token %}
-                  <button class="btn btn-outline-dark" type="submit">Выход</button>
+                  <button class="btn btn-outline-dark" type="submit">
+                    Выход
+                  </button>
                 </form>
               </li>
               {% else %}
               <li class="nav-item">
-                <a class="btn btn-outline-dark" href="{% url 'login' %}">Вход</a>
+                <a class="btn btn-outline-dark mr-2" href="{% url 'login' %}">
+                  Вход
+                </a>
               </li>
               <li class="nav-item">
-                <a class="btn btn-outline-dark" href="{% url 'register' %}">Регистрация</a>
+                <a class="btn btn-outline-dark" href="{% url 'register' %}">
+                  Регистрация
+                </a>
               </li>
               {% endif %}
             </ul>
@@ -106,13 +156,18 @@
       </nav>
     </header>
 
-    <main class="container mt-4">
+    <main class="container">
       {% block content %}{% endblock %}
     </main>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      function showLoader() {
+        document.getElementById('loader').style.display = 'block';
+      }
+    </script>
   </body>
 </html>

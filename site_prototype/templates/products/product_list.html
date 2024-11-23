@@ -4,12 +4,12 @@
 
 {% block content %}
 <div class="container">
-    <h2 class="my-4">
+    <h2 class="my-4 text-center text-dark font-weight-bold">
         {% if query %}
             {% if products %}
-                Товары по запросу: "{{ query }}"
+                Товары по запросу: "<span class="text-primary">{{ query }}</span>"
             {% else %}
-                Товаров по запросу "{{ query }}" не найдено
+                <span class="text-danger">Товаров по запросу "{{ query }}" не найдено</span>
             {% endif %}
         {% else %}
             Все товары
@@ -17,24 +17,26 @@
     </h2>
     <div class="row">
         {% for product in products %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-img-container" style="overflow: hidden; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                        <img src="{{ product.image.url }}" class="card-img-top img-fluid" alt="{{ product.name }}">
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">{{ product.name }}</h5>
+                        <h5 class="card-title font-weight-bold text-dark">{{ product.name }}</h5>
                         <p class="card-text">
                             <span class="price-tag">{{ product.price }}₽</span>
                         </p>
                     </div>
-                    <div class="card-footer">
-                        <a href="{% url 'product-detail' product.slug %}" class="btn btn-primary btn-block">
+                    <div class="card-footer bg-white border-0">
+                        <a href="{% url 'product-detail' product.slug %}" class="btn btn-dark btn-block">
                             Подробнее
                         </a>
                     </div>
                 </div>
             </div>
         {% empty %}
-            <p>Товаров нет.</p>
+            <p class="text-center text-muted">Товаров нет.</p>
         {% endfor %}
     </div>
 </div>

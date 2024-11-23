@@ -4,60 +4,75 @@
 
 {% block content %}
 <div class="container">
-    <h2 class="my-4">{{ product.name }}</h2>
-    <div class="row">
-        <div class="col-md-6">
-            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
-        </div>
-        <div class="col-md-6">
-            <p class="lead">{{ product.description }}</p>
-            <p class="h4">Цена: <span class="price-tag">{{ product.price }}₽</span></p>
-            <p><strong>На складе:</strong> {{ product.stock }}</p>
+    <div class="product-detail-container">
+        <h2 class="product-detail-title my-4">{{ product.name }}</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid product-image">
+            </div>
+            <div class="col-md-6">
+                <p class="product-detail-description lead">{{ product.description }}</p>
+                <p class="product-detail-price">Цена: <span class="price-tag">{{ product.price }}₽</span></p>
+                <p class="product-detail-stock"><strong>На складе:</strong> {{ product.stock }}</p>
 
-            {% if user.is_authenticated %}
-                {% if current_quantity > 0 %}
-                    <p>Товар уже в корзине: <strong>{{ current_quantity }}</strong></p>
-                    <form method="post" action="{% url 'update-cart' cart_item.id %}" class="update-cart-form">
-                        {% csrf_token %}
-                        <div class="d-flex align-items-center">
-                            <button type="button" class="btn btn-outline-secondary quantity-minus" {% if max_quantity <= 0 %}disabled{% endif %}>-</button>
-                            <input type="number" id="quantity" name="quantity" class="form-control mx-2 text-center quantity-input" value="{{ current_quantity }}" min="1" max="{{ max_quantity }}" style="width: 60px;" required>
-                            <button type="button" class="btn btn-outline-secondary quantity-plus" {% if max_quantity <= 0 %}disabled{% endif %}>+</button>
-                        </div>
-                        <button type="submit" class="btn btn-success btn-block mt-2">Обновить в корзине</button>
-                    </form>
-                {% else %}
-                    {% if can_add_to_cart %}
-                        <form method="post" action="{% url 'add-to-cart' product.id %}" class="update-cart-form">
+                {% if user.is_authenticated %}
+                    {% if current_quantity > 0 %}
+                        <p>Товар уже в корзине: <strong>{{ current_quantity }}</strong></p>
+                        <form method="post" action="{% url 'update-cart' cart_item.id %}" class="update-cart-form">
                             {% csrf_token %}
                             <div class="d-flex align-items-center">
                                 <button type="button" class="btn btn-outline-secondary quantity-minus" {% if max_quantity <= 0 %}disabled{% endif %}>-</button>
                                 <input type="number" id="quantity" name="quantity" class="form-control mx-2 text-center quantity-input" value="{{ current_quantity }}" min="1" max="{{ max_quantity }}" style="width: 60px;" required>
                                 <button type="button" class="btn btn-outline-secondary quantity-plus" {% if max_quantity <= 0 %}disabled{% endif %}>+</button>
                             </div>
-                            <button type="submit" class="btn btn-success btn-block mt-2">Добавить в корзину</button>
-                        </form>                
+                            <button type="submit" class="btn btn-success btn-block mt-2">Обновить в корзине</button>
+                        </form>
                     {% else %}
-                        <p class="text-danger">К сожалению, данный товар недоступен для добавления в корзину.</p>
+                        {% if can_add_to_cart %}
+                            <form method="post" action="{% url 'add-to-cart' product.id %}" class="update-cart-form">
+                                {% csrf_token %}
+                                <div class="d-flex align-items-center">
+                                    <button type="button" class="btn btn-outline-secondary quantity-minus" {% if max_quantity <= 0 %}disabled{% endif %}>-</button>
+                                    <input type="number" id="quantity" name="quantity" class="form-control mx-2 text-center quantity-input" value="{{ current_quantity }}" min="1" max="{{ max_quantity }}" style="width: 60px;" required>
+                                    <button type="button" class="btn btn-outline-secondary quantity-plus" {% if max_quantity <= 0 %}disabled{% endif %}>+</button>
+                                </div>
+                                <button type="submit" class="btn btn-success btn-block mt-2">Добавить в корзину</button>
+                            </form>                
+                        {% else %}
+                            <p class="text-danger">К сожалению, данный товар недоступен для добавления в корзину.</p>
+                        {% endif %}
                     {% endif %}
+                {% else %}
+                    <p class="text-danger">Пожалуйста, <a href="{% url 'login' %}">войдите в аккаунт</a>, чтобы добавить товары в корзину.</p>
                 {% endif %}
-            {% else %}
-                <p class="text-danger">Пожалуйста, <a href="{% url 'login' %}">войдите в аккаунт</a>, чтобы добавить товары в корзину.</p>
-            {% endif %}
+            </div>
         </div>
+        <a href="{% url 'product-list' %}" class="btn btn-secondary btn-back-to-products">Назад к списку продуктов</a>
     </div>
-    <a href="{% url 'product-list' %}" class="btn btn-secondary mt-4">Назад к списку продуктов</a>
 </div>
-
 <style>
     input[type="number"]::-webkit-outer-spin-button,
     input[type="number"]::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
     }
-  
+
     input[type="number"] {
         -moz-appearance: textfield;
+        font-size: 1.5rem;
+        padding: 10px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        width: 80px;
+        text-align: center;
+        background-color: #f9f9f9;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input[type="number"]:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+        outline: none;
     }
 </style>
 

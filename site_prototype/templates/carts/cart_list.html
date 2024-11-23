@@ -67,26 +67,31 @@
                             Перейти к оплате
                         </button>
                     </form>                    
-                    <div id="payment-modal" style="display: none; position: fixed; top: 0; left: 0; 
-                        width: 100%; 
-                        height: 100%; 
-                        background: linear-gradient(
-                            -37deg,
-                            rgba(188, 214, 229, 0.94) 0%,
-                            rgba(38, 152, 225, 0.94) 25%,
-                            rgba(22, 137, 210, 0.94) 50%,
-                            rgba(38, 152, 225, 0.94) 75%,
-                            rgba(188, 214, 229, 0.94) 100%
-                        ); z-index: 1000;">
-                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                            width: 100%; max-width: 1200px; height: 100%;
-                            border-radius: 10px;">
-                            <iframe id="payment-iframe" src="" scrolling="no" style="width: 100%; height: 100%; border: none;"></iframe>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="payment-modal" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%; 
+    height: 100%; 
+    background: linear-gradient(
+        -37deg,
+        rgba(188, 214, 229, 0.94) 0%,
+        rgba(38, 152, 225, 0.94) 25%,
+        rgba(22, 137, 210, 0.94) 50%,
+        rgba(38, 152, 225, 0.94) 75%,
+        rgba(188, 214, 229, 0.94) 100%
+    ); z-index: 1000;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        width: 100%; max-width: 1200px; height: 100%;
+        border-radius: 10px;">
+        <iframe id="payment-iframe" src="" scrolling="no" style="width: 100%; height: 100%; border: none;"></iframe>
     </div>
 </div>
 
@@ -96,9 +101,23 @@
         -webkit-appearance: none;
         margin: 0;
     }
-  
+
     input[type="number"] {
         -moz-appearance: textfield;
+        font-size: 1.5rem;
+        padding: 10px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        width: 80px;
+        text-align: center;
+        background-color: #f9f9f9;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input[type="number"]:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+        outline: none;
     }
   
     .card {
@@ -202,7 +221,7 @@
 
         iframe.src = "http://localhost:5173/";
 
-        modal.style.display = 'block';
+        modal.style.display = 'flex';
     });
     
     document.getElementById('payment-modal').addEventListener('click', function (event) {
