@@ -4,12 +4,14 @@ import "./App.css";
 import BankCardForm from "./BankCardForm/BankCardForm";
 import PaymentMethods from "./PaymentMethods/PaymentMethods";
 import PaymentStatusPage from "./PaymentStatusPage/PaymentStatusPage";
+import TokenValidation from './components/TokenValidation';
 
 function App() {
 	const location = useLocation();
 
 	return (
 		<AnimatePresence mode="wait">
+			<TokenValidation /> 
 			<Routes location={location} key={location.pathname}>
 				<Route path="/" element={<PaymentMethods />} />
 				<Route path="bankCard" element={<BankCardForm />} />

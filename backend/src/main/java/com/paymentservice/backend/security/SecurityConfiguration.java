@@ -24,8 +24,8 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(ALL).authenticated())
-                .httpBasic(AbstractHttpConfigurer::disable)
+                        .requestMatchers("/api/v2/**").permitAll()
+                        .requestMatchers("/api/v1/**").authenticated())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

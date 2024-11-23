@@ -9,6 +9,7 @@ import MethodCard from "../MethodCard/MethodCard";
 import SavedCardsDropdown from "../SavedCardDropdown/SavedCardDropdown";
 import fetchPaymentAmount from "../utils/fetchPaymentAmount";
 import { formatAmount } from "../utils/formatAmount";
+import { validateToken } from "../utils/validateToken";
 
 interface IPaymentData {
 	user_id: string;
@@ -20,8 +21,9 @@ function PaymentMethods() {
 	const [paymentAmount, setPaymentAmount] = useState("0");
 	const [paymentData, setPaymentData] = useState<IPaymentData>();
 	const [containerWidth, setContainerWidth] = useState<number | null>(null);
+	const [isDataLoaded, setIsDataLoaded] = useState(false);
+	const [isTokenChecked, setIsTokenChecked] = useState(false);
 	const containerRef = useRef<HTMLDivElement | null>(null);
-	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (containerRef.current) {
@@ -29,21 +31,49 @@ function PaymentMethods() {
 		}
 	}, []);
 
+	
 	useEffect(() => {
 		const loadPaymentAmount = async () => {
-			try {
-				const data = await fetchPaymentAmount();
-				if (data) {
-					setPaymentData(data);
-					setPaymentAmount(data.total_price);
-				}
-			} catch (error) {
-				console.error("Error fetching payment amount:", error);
+		try {
+			const data = await fetchPaymentAmount();
+			if (data) {
+			setPaymentData(data);
+			setPaymentAmount(data.total_price);
+	
+			sessionStorage.setItem("token", data.payment_token);
+			sessionStorage.setItem("userId", data.user_id);
+			setIsDataLoaded(true);
 			}
+		} catch (error) {
+			console.error("Error fetching payment amount:", error);
+		}
 		};
-
+	
 		loadPaymentAmount();
 	}, []);
+	
+	useEffect(() => {
+		if (!isDataLoaded || isTokenChecked) return;
+	
+		const token = sessionStorage.getItem("token");
+		const userId = sessionStorage.getItem("userId");
+	
+		if (!token || !userId) {
+		setTokenError("Отсутствует токен или идентификатор пользователя.");
+		setIsTokenChecked(true);
+		return;
+		}
+	
+		const checkToken = async () => {
+		const isValid = await validateToken(token, userId);
+		if (!isValid) {
+			setTokenError("Токен недействителен, пожалуйста, войдите снова.");
+		}
+		setIsTokenChecked(true);
+		};
+	
+		checkToken();
+	}, [isDataLoaded, isTokenChecked]);
 
 	const handleGoBack = () => {
 		window.top.postMessage("close-window", "http://localhost:8000");

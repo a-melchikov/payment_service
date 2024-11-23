@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/token-validation")
+@RequestMapping("/api/v2/token-validation")
 @RequiredArgsConstructor
 @CrossOrigin
 @Tag(name = "Token Validation API", description = "API для валидации токенов для Frontend")

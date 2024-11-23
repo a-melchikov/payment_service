@@ -27,8 +27,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
         String requestPath = request.getRequestURI();
-        if (requestPath.startsWith("/actuator")) {
-            log.info("Request to actuator path, skipping token validation.");
+        if (requestPath.startsWith("/actuator") || requestPath.startsWith("/api/v2")) {
+            log.info("Request without authentication, skipping token validation.");
             chain.doFilter(request, response);
             return;
         }
