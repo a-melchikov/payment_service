@@ -112,10 +112,12 @@
               {% if user.is_authenticated %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'cart-list' %}">
-                  <img
-                    src="{% static 'img/cart-icon.png' %}"
-                    alt="Корзина"
-                  />
+                  <img src="{% static 'img/cart-icon.png' %}" alt="Корзина" />
+                  {% if cart_item_count > 0 %}
+                  <span class="badge badge-pill badge-danger">
+                    {{ cart_item_count }}
+                  </span>
+                  {% endif %}
                 </a>
               </li>
               <li class="nav-item">

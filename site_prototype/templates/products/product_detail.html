@@ -17,7 +17,7 @@
 
                 {% if user.is_authenticated %}
                     {% if current_quantity > 0 %}
-                        <p>Товар уже в корзине: <strong>{{ current_quantity }}</strong></p>
+                        <p><i>Товар уже в корзине</i></p>
                         <form method="post" action="{% url 'update-cart' cart_item.id %}" class="update-cart-form">
                             {% csrf_token %}
                             <div class="d-flex align-items-center">

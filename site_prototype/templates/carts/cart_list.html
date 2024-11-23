@@ -145,7 +145,23 @@
 
 <script>
     function submitForm(form) {
-        form.submit();
+        const formData = new FormData(form);
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Произошла ошибка при обновлении корзины.');
+            }
+        })
+        .catch(error => console.error('Ошибка:', error));
     }
 
     window.addEventListener('message', event => {

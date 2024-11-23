@@ -11,7 +11,10 @@ class Cart(models.Model):
         Product, on_delete=models.CASCADE, verbose_name="Продукт"
     )
     quantity = models.PositiveIntegerField(default=1, verbose_name="Количество")
-    added_at = models.DateTimeField(auto_now_add=True, verbose_name="Добавлено в")
+    added_at = models.DateTimeField(auto_now_add=True, verbose_name="Добавлено в")\
+
+    def get_unique_item_count(self):
+        return self.items.count()
 
     def __str__(self):
         return f"{self.product.name} - {self.quantity}"
@@ -20,3 +23,4 @@ class Cart(models.Model):
         verbose_name = "Корзина"
         verbose_name_plural = "Корзины"
         ordering = ["-added_at"]
+        unique_together = ('user', 'product')
