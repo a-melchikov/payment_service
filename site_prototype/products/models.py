@@ -4,6 +4,7 @@ from PIL import Image
 
 import numpy as np
 from django.db import models
+from django.urls import reverse
 
 
 class Category(models.Model):
@@ -36,6 +37,9 @@ class Product(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    def get_absolute_url(self):
+        return reverse('product-detail', kwargs={'slug': self.slug})
 
     def save(self, *args, process_image=True, **kwargs):
         super().save(*args, **kwargs)

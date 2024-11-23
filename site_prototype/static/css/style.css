@@ -226,7 +226,8 @@ a:hover {
 }
 
 
-/* Стиль для формы добавления в корзину */
+.add-to-cart-form .quantity-minus,
+.add-to-cart-form .quantity-plus,
 .update-cart-form .quantity-minus,
 .update-cart-form .quantity-plus {
   font-size: 1.5rem;
@@ -238,21 +239,49 @@ a:hover {
   transition: background-color 0.3s, color 0.3s;
 }
 
+.add-to-cart-form .quantity-minus:hover,
+.add-to-cart-form .quantity-plus:hover,
+.update-cart-form .quantity-minus:hover,
+.update-cart-form .quantity-plus:hover {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.add-to-cart-form .quantity-input,
 .update-cart-form .quantity-input {
   width: 60px;
   text-align: center;
+  font-size: 1.5rem;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+.add-to-cart-form .quantity-input:focus,
+.update-cart-form .quantity-input:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+  outline: none;
+}
+
+.add-to-cart-form button,
 .update-cart-form button {
   font-weight: 600;
   text-transform: uppercase;
   padding: 12px;
   border-radius: 20px;
-  transition: background-color 0.3s;
+  border: 2px solid #28a745;
+  background-color: #28a745;
+  color: #fff;
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
+.add-to-cart-form button:hover,
 .update-cart-form button:hover {
   background-color: #555;
+  border-color: #555;
 }
 
 /* Кнопка назад */

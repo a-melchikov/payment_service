@@ -59,7 +59,7 @@
     <div class="modal-content">
         <button class="modal-close" id="modal-close-button">&times;</button>
         <h3>Операция завершена</h3>
-        <p>Ваш товар успешно добавлен в корзину!</p>
+        <p>Ваш товар успешно обновлен в корзине!</p>
     </div>
 </div>
 <style>
@@ -206,7 +206,12 @@
                         'X-CSRFToken': form.querySelector('[name="csrfmiddlewaretoken"]').value
                     }
                 })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Ошибка сети');
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         if (data.success) {
                             showModal();
@@ -215,9 +220,12 @@
                             alert(data.error || 'Ошибка при обработке запроса');
                         }
                     })
-                    .catch(error => console.error('Ошибка:', error));
+                    .catch(error => {
+                        console.error('Ошибка:', error);
+                        alert('Ошибка сети. Повторите попытку.');
+                    });
             });
         });
-    });
+    });    
 </script>
 {% endblock %}

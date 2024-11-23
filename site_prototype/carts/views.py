@@ -4,7 +4,7 @@ import jwt
 from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.views import View
 from django.views.generic import ListView, CreateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -39,7 +39,6 @@ class AddToCartView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         product = get_object_or_404(Product, pk=self.kwargs["pk"])
         form.instance.product = product
-
         quantity_to_add = form.cleaned_data["quantity"]
 
         existing_cart_item = Cart.objects.filter(
@@ -49,20 +48,32 @@ class AddToCartView(LoginRequiredMixin, CreateView):
         if existing_cart_item:
             new_quantity = existing_cart_item.quantity + quantity_to_add
             if new_quantity > product.stock:
-                return JsonResponse({'success': False, 'error': f"Доступно только {product.stock} штук на складе, у вас в корзине: {existing_cart_item.quantity}."})
+                return JsonResponse({
+                    'success': False, 
+                    'error': f"Доступно только {product.stock} штук на складе, у вас в корзине: {existing_cart_item.quantity}."
+                })
 
             existing_cart_item.quantity = new_quantity
             existing_cart_item.save()
-            return JsonResponse({'success': True, 'action': 'updated', 'new_quantity': new_quantity})
+            response_data = {'success': True, 'action': 'updated', 'new_quantity': new_quantity}
         else:
             if quantity_to_add > product.stock:
-                return JsonResponse({'success': False, 'error': f"Доступно только {product.stock} штук на складе."})
+                return JsonResponse({
+                    'success': False, 
+                    'error': f"Доступно только {product.stock} штук на складе."
+                })
 
             form.instance.quantity = quantity_to_add
             form.instance.save()
-            return JsonResponse({'success': True, 'action': 'added', 'new_quantity': quantity_to_add})
+            response_data = {'success': True, 'action': 'added', 'new_quantity': quantity_to_add}
 
-        return JsonResponse({'success': False, 'error': 'Unknown error'})
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse(response_data)
+        else:
+            return redirect(product.get_absolute_url())
+
+    def form_invalid(self, form):
+        return JsonResponse({'success': False, 'error': 'Некорректные данные.'})
 
 
 
