@@ -1,4 +1,4 @@
-const fetchPaymentAmount = async () => {
+const fetchPaymentData = async () => {
 	try {
 		const response = await fetch("http://localhost:8000/carts/checkout/", {
 			method: "POST",
@@ -24,8 +24,8 @@ const fetchPaymentAmount = async () => {
 		sessionStorage.setItem("paymentData", JSON.stringify(data));
 		return data;
 	} catch (error) {
-		console.error("Error fetching payment amount:", error);
+		return { user_id: -1, total_price: 0, payment_token: "access-denied" };
 	}
 };
 
-export default fetchPaymentAmount;
+export default fetchPaymentData;

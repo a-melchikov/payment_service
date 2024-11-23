@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 interface IPaymentData {
 	user_id: string;
 	total_price: string;
+	payment_token: string;
 }
 
 interface SavedCardsDropdownProps {
@@ -22,18 +23,18 @@ function SavedCardsDropdown({
 	paymentData,
 	containerWidth,
 }: SavedCardsDropdownProps) {
-	const [isOpen, setIsOpen] = useState(false);
-	const [savedCards, setSavedCards] = useState([]);
+	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [savedCards, setSavedCards] = useState<ICard[]>([]);
 	const [savedCardNumber, setSavedCardNumber] =
 		useState<string>("Сохранённые карты");
-	const [isCardSelected, setIsCardSelected] = useState(false);
+	const [isCardSelected, setIsCardSelected] = useState<boolean>(false);
 	const navigate = useNavigate();
 
 	const toggleDropdown = () => setIsOpen(!isOpen);
 
 	useEffect(() => {
 		const fetchSavedCards = async () => {
-			if (!paymentData) return;
+			if (!paymentData || paymentData.payment_token === "access-denied") return;
 
 			try {
 				const response = await fetch(
@@ -42,7 +43,7 @@ function SavedCardsDropdown({
 						method: "GET",
 						headers: {
 							"Content-Type": "application/json",
-							"Authorization": `Bearer ${paymentData?.payment_token}`,
+							Authorization: `Bearer ${paymentData?.payment_token}`,
 						},
 					}
 				);
@@ -63,19 +64,24 @@ function SavedCardsDropdown({
 
 	const deleteCard = async (cardNumber: string, event: React.MouseEvent) => {
 		event.stopPropagation();
+
 		if (!paymentData) return;
+
 		try {
-			const response = await fetch(`http://localhost:8080/api/v1/saved-cards?userId=${paymentData.user_id}`, {
-				method: "DELETE",
-				headers: {
-					"Content-Type": "application/json",
-					"Authorization": `Bearer ${paymentData?.payment_token}`,
-				},
-				body: JSON.stringify({
-					cardNumber: cardNumber,
-					userId: paymentData?.user_id,
-				}),
-			});
+			const response = await fetch(
+				`http://localhost:8080/api/v1/saved-cards?userId=${paymentData.user_id}`,
+				{
+					method: "DELETE",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${paymentData?.payment_token}`,
+					},
+					body: JSON.stringify({
+						cardNumber: cardNumber,
+						userId: paymentData?.user_id,
+					}),
+				}
+			);
 
 			if (!response.ok) {
 				throw new Error("Не удалось удалить карту");
@@ -93,6 +99,7 @@ function SavedCardsDropdown({
 
 	const paySavedCard = async (cardNumber: string) => {
 		if (!paymentData) return;
+
 		try {
 			const response = await fetch(
 				`http://localhost:8080/api/v1/saved-cards/pay?paymentSum=${paymentData?.total_price}&userId=${paymentData.user_id}`,
@@ -100,7 +107,7 @@ function SavedCardsDropdown({
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						"Authorization": `Bearer ${paymentData?.payment_token}`,
+						Authorization: `Bearer ${paymentData?.payment_token}`,
 					},
 					body: JSON.stringify({
 						cardNumber: cardNumber,
@@ -108,6 +115,7 @@ function SavedCardsDropdown({
 					}),
 				}
 			);
+
 			const result = await response.json();
 			sessionStorage.setItem("paymentStatus", JSON.stringify(result));
 			navigate("/bankCard/status", { state: { containerWidth } });
@@ -155,7 +163,6 @@ function SavedCardsDropdown({
 								className="flex justify-between items-center px-4 tabletS:py-2 mobileS:py-1 hover:bg-gray-100 cursor-pointer"
 								onClick={() => chooseSavedCard(card.cardNumber)}
 							>
-
 								<span className="tabletS:text-[16px] mobileS:text-[12px]">
 									{card.cardNumber}
 								</span>

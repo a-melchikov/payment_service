@@ -1,15 +1,13 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { FaAngleLeft } from "react-icons/fa6";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import bankCard from "../images/bank-card.svg";
 import spb from "../images/sbp.svg";
 import yoomoney from "../images/YooMoney.svg";
 import MethodCard from "../MethodCard/MethodCard";
 import SavedCardsDropdown from "../SavedCardDropdown/SavedCardDropdown";
-import fetchPaymentAmount from "../utils/fetchPaymentAmount";
 import { formatAmount } from "../utils/formatAmount";
-import { validateToken } from "../utils/validateToken";
 
 interface IPaymentData {
 	user_id: string;
@@ -17,13 +15,14 @@ interface IPaymentData {
 	payment_token: string;
 }
 
-function PaymentMethods() {
-	const [paymentAmount, setPaymentAmount] = useState("0");
-	const [paymentData, setPaymentData] = useState<IPaymentData>();
+interface IPaymentMethodsProps {
+	paymentData: IPaymentData;
+}
+
+function PaymentMethods({ paymentData }: IPaymentMethodsProps) {
 	const [containerWidth, setContainerWidth] = useState<number | null>(null);
-	const [isDataLoaded, setIsDataLoaded] = useState(false);
-	const [isTokenChecked, setIsTokenChecked] = useState(false);
 	const containerRef = useRef<HTMLDivElement | null>(null);
+	const [paymentAmount, setPaymentAmount] = useState<string>("0");
 
 	useEffect(() => {
 		if (containerRef.current) {
@@ -31,49 +30,11 @@ function PaymentMethods() {
 		}
 	}, []);
 
-	
 	useEffect(() => {
-		const loadPaymentAmount = async () => {
-		try {
-			const data = await fetchPaymentAmount();
-			if (data) {
-			setPaymentData(data);
-			setPaymentAmount(data.total_price);
-	
-			sessionStorage.setItem("token", data.payment_token);
-			sessionStorage.setItem("userId", data.user_id);
-			setIsDataLoaded(true);
-			}
-		} catch (error) {
-			console.error("Error fetching payment amount:", error);
-		}
-		};
-	
-		loadPaymentAmount();
-	}, []);
-	
-	useEffect(() => {
-		if (!isDataLoaded || isTokenChecked) return;
-	
-		const token = sessionStorage.getItem("token");
-		const userId = sessionStorage.getItem("userId");
-	
-		if (!token || !userId) {
-		setTokenError("Отсутствует токен или идентификатор пользователя.");
-		setIsTokenChecked(true);
-		return;
-		}
-	
-		const checkToken = async () => {
-		const isValid = await validateToken(token, userId);
-		if (!isValid) {
-			setTokenError("Токен недействителен, пожалуйста, войдите снова.");
-		}
-		setIsTokenChecked(true);
-		};
-	
-		checkToken();
-	}, [isDataLoaded, isTokenChecked]);
+		if (!paymentData) return;
+
+		setPaymentAmount(paymentData.total_price);
+	}, [paymentData]);
 
 	const handleGoBack = () => {
 		window.top.postMessage("close-window", "http://localhost:8000");

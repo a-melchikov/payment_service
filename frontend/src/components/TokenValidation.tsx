@@ -1,70 +1,71 @@
-import React, { useEffect, useState } from 'react';
-import { validateToken } from '../utils/validateToken';
+import { ReactNode, useEffect, useState } from "react";
+import { validateToken } from "../utils/validateToken";
 
-const TokenValidation = () => {
-  const [loading, setLoading] = useState(true);
-  const [isValid, setIsValid] = useState(true);
-  const [error, setError] = useState('');
-  const [attempts, setAttempts] = useState(0);
+interface IPaymentData {
+	user_id: string;
+	total_price: string;
+	payment_token: string;
+}
 
-  useEffect(() => {
-    const maxAttempts = 10;
-    const interval = 100;
+interface ITokenValidationProps {
+	children: ReactNode;
+	paymentData: IPaymentData | undefined;
+}
 
-    const checkSessionData = setInterval(() => {
-      const token = sessionStorage.getItem('token');
-      const userId = sessionStorage.getItem('userId');
+const TokenValidation = ({ children, paymentData }: ITokenValidationProps) => {
+	const [isValid, setIsValid] = useState<boolean>(true);
+	const [error, setError] = useState<string>("");
+	const [attempts, setAttempts] = useState<number>(0);
 
-      if (token && userId) {
-        clearInterval(checkSessionData);
-        validateToken(token, userId)
-          .then((valid) => {
-            setIsValid(valid);
-            if (!valid) {
-              setError('Токен недействителен. Пожалуйста, войдите снова.');
-            }
-            setLoading(false);
-          })
-          .catch(() => {
-            setError('Ошибка при проверке токена. Попробуйте позже.');
-            setLoading(false);
-          });
-      } else {
-        setAttempts((prev) => prev + 1);
-        if (attempts >= maxAttempts - 1) {
-          clearInterval(checkSessionData);
-          setError('Отсутствуют данные для аутентификации.');
-          setIsValid(false);
-          setLoading(false);
-        }
-      }
-    }, interval);
+	useEffect(() => {
+		const maxAttempts = 10;
+		const interval = 100;
 
-    return () => clearInterval(checkSessionData);
-  }, [attempts]);
+		const checkSessionData = setInterval(() => {
+			if (!paymentData) return;
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-gray-100">
-        <div className="text-center">
-          <p className="text-lg text-gray-500 font-medium">Загрузка...</p>
-        </div>
-      </div>
-    );
-  }
+			const token = paymentData?.payment_token;
+			const userId = paymentData?.user_id;
 
-  if (!isValid) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-gray-100">
-        <div className="bg-white shadow-lg rounded-lg p-6 max-w-md text-center">
-          <p className="text-red-500 font-semibold text-lg mb-4">{error}</p>
-          <p className="text-gray-500">Попробуйте обновить страницу или войдите снова.</p>
-        </div>
-      </div>
-    );
-  }
+			if (token && userId) {
+				clearInterval(checkSessionData);
+				validateToken(token, userId)
+					.then((valid) => {
+						setIsValid(valid);
+						if (!valid) {
+							setError("Токен недействителен. Пожалуйста, войдите снова.");
+						}
+					})
+					.catch(() => {
+						setError("Ошибка при проверке токена. Попробуйте позже.");
+					});
+			} else {
+				setAttempts((prev) => prev + 1);
+				if (attempts >= maxAttempts - 1) {
+					clearInterval(checkSessionData);
+					setError("Отсутствуют данные для аутентификации.");
+					setIsValid(false);
+				}
+			}
+		}, interval);
 
-  return null;
+		return () => clearInterval(checkSessionData);
+	}, [attempts, paymentData]);
+
+	if (!isValid) {
+		return (
+			<div className="flex self-center justify-center items-center tabletS:mx-10 mobileS:mx-5 px-5 pt-8 max-w-[580px] w-full tabletS:h-[760px] mobileS:h-[600px] tabletM:rounded-[20px] tabletS:rounded-[16px] mobileM:rounded-[12px] mobileS:rounded-[8px] bg-primary">
+				<div className="bg-white shadow-lg rounded-lg p-6 max-w-md text-center">
+					<p className="text-red-500 font-semibold text-lg mb-4">{error}</p>
+					<p className="text-gray-500">
+						Попробуйте обновить страницу или войдите снова.
+					</p>
+				</div>
+			</div>
+		);
+	}
+
+	return <>{children}</>;
 };
 
 export default TokenValidation;
